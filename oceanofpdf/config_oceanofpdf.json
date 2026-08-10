@@ -1,0 +1,18 @@
+{
+  "base_url": "https://oceanofpdf.com/category/genres/omegaverse/",
+  "category": "omegaverse",
+  "start_page": 1,
+  "end_page": 452,
+  "timeout": 30,
+  "max_retries": 2,
+  "retry_backoff": 2,
+  "sleep_min": 1.5,
+  "sleep_max": 3.5,
+  "output_json": "output/omegaverse.json",
+  "output_csv": "output/omegaverse.csv",
+  "cache_file": "output/omegaverse_cache.json",
+  "batch_size": 25,
+  "batch_sleep_min": 10,
+  "batch_sleep_max": 20,
+  "max_consecutive_errors": 5
+}
