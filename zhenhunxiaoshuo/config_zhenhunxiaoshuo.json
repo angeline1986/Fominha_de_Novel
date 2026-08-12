@@ -1,0 +1,17 @@
+{
+  "site": "https://www.zhenhunxiaoshuo.com",
+  "input_csv": "input/chapters.csv",
+  "output_dir": "output",
+  "cache_dir": "cache",
+  "selectors": {
+    "chapter_title": "h1.article-title",
+    "chapter_lead": "article.article-content > p:first-child",
+    "story_paragraphs": "article.article-content > p:not(:first-child)"
+  },
+  "http": {
+    "timeout_seconds": 30,
+    "delay_seconds": 1.0,
+    "retries": 3,
+    "user_agent": "Mozilla/5.0 (compatible; FominhaDeNovel/1.0)"
+  }
+}
