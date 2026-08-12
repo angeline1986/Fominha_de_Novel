@@ -1,10 +1,13 @@
 {
+  "book": {
+    "id": "di_wang_gong_lue",
+    "title": "帝王攻略",
+    "author": "语笑阑珊",
+    "language": "zh-CN"
+  },
   "site": "https://www.zhenhunxiaoshuo.com",
   "input_csv": "input/chapters.csv",
   "output_dir": "output",
-  "json_output_dir": "output/json",
-  "epub_output_dir": "output/epub",
-  "cover_path": "input/assets/cover.jpg",
   "cache_dir": "cache",
   "selectors": {
     "chapter_title": "h1.article-title",
@@ -13,7 +16,7 @@
   },
   "http": {
     "timeout_seconds": 30,
-    "delay_seconds": 1.0,
+    "delay_seconds": 1.5,
     "retries": 3,
     "user_agent": "Mozilla/5.0 (compatible; FominhaDeNovel/1.0)"
   }
