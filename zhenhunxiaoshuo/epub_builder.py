@@ -19,6 +19,11 @@ def load_config():
     )
 
 
+def _book_value(book, key, default=""):
+    value = book.get(key, default)
+    return str(value).strip() if value is not None else default
+
+
 def _cover_candidates(config):
     candidates = []
 
@@ -36,31 +41,21 @@ def _cover_candidates(config):
         if isinstance(path, str) and path.strip():
             candidates.append(ROOT / path.strip())
 
-    for name in (
-        "cover.jpg", "cover.jpeg", "cover.png",
-        "capa.jpg", "capa.jpeg", "capa.png",
-    ):
-        candidates.append(ROOT / "input" / name)
-
     for folder in ("input", "input/assets"):
         for name in (
-            "cover.jpg",
-            "cover.jpeg",
-            "cover.png",
-            "capa.jpg",
-            "capa.jpeg",
-            "capa.png",
+            "cover.jpg", "cover.jpeg", "cover.png",
+            "capa.jpg", "capa.jpeg", "capa.png",
         ):
             candidates.append(ROOT / folder / name)
 
     seen = set()
-    unique = []
+    result = []
     for path in candidates:
-        key = str(path.resolve())
-        if key not in seen:
-            seen.add(key)
-            unique.append(path)
-    return unique
+        resolved = str(path.resolve())
+        if resolved not in seen:
+            seen.add(resolved)
+            result.append(path)
+    return result
 
 
 def find_cover(config):
@@ -81,7 +76,6 @@ def _cover_media_type(path):
 
 
 def _split_lead(lead):
-    """Retorna (titulo, frase) somente para formatos reconhecidos com segurança."""
     text = (lead or "").strip()
     patterns = (
         r"^【\s*(?P<title>[^】]+?)\s*】\s*(?P<phrase>.+?)\s*$",
@@ -114,17 +108,22 @@ def _chapter_presentation(chapter, index, mode):
 
 
 def _chapter_xhtml(chapter, index, language, mode):
-    visual_title, epigraph, transformed = _chapter_presentation(chapter, index, mode)
+    visual_title, epigraph, transformed = _chapter_presentation(
+        chapter, index, mode
+    )
     title = html.escape(str(visual_title))
     paragraphs = chapter.get("paragraphs") or []
 
     body = []
     if epigraph:
         if mode == MODE_NO_REDUNDANCY and transformed:
+            # IMPORTANTE:
+            # As aspas NÃO fazem parte do texto, para o Calibre não removê-las
+            # ou traduzi-las de forma inconsistente. Elas são inseridas pelo CSS.
             body.append(
-                '<p class="chapter-epigraph">“'
+                '<p class="chapter-epigraph">'
                 + html.escape(str(epigraph))
-                + '”</p>'
+                + '</p>'
             )
         else:
             body.append(
@@ -159,8 +158,7 @@ def _cover_xhtml(book_title, cover_filename, language):
         '<head><meta charset="utf-8"/><title>Capa</title>'
         '<link rel="stylesheet" type="text/css" href="Styles/book.css"/></head>\n'
         '<body class="cover-page">\n'
-        f'<div class="cover"><img src="Images/{html.escape(cover_filename)}" '
-        f'alt="{html.escape(book_title)}"/></div>\n'
+        f'<div class="cover"><img src="Images/{html.escape(cover_filename)}" alt="{html.escape(book_title)}"/></div>\n'
         '</body></html>'
     )
 
@@ -252,7 +250,7 @@ def _content_opf(book_title, author, language, uid, chapters, cover_info=None):
 
 
 def _output_path(config, mode):
-    book_id = str(config["book"].get("id", "book")).strip() or "book"
+    book_id = _book_value(config["book"], "id", "book")
     filename = (
         f"{book_id}.epub"
         if mode == MODE_STANDARD
@@ -267,9 +265,9 @@ def build_epub(json_path, output_path=None, mode=MODE_STANDARD):
 
     config = load_config()
     book = config["book"]
-    book_title = str(book.get("title", "Sem título")).strip()
-    author = str(book.get("author", "")).strip()
-    language = str(book.get("language", "zh-CN")).strip() or "zh-CN"
+    book_title = _book_value(book, "title", "Sem título")
+    author = _book_value(book, "author", "")
+    language = _book_value(book, "language", "zh-CN")
 
     json_path = Path(json_path)
     data = json.loads(json_path.read_text(encoding="utf-8"))
@@ -304,6 +302,8 @@ def build_epub(json_path, output_path=None, mode=MODE_STANDARD):
         '.chapter-lead { text-indent: 0; font-weight: bold; margin-bottom: 2em; }\n'
         '.chapter-epigraph { text-indent: 0; font-style: italic; text-align: center; '
         'margin: 1em 8% 3em 8%; }\n'
+        '.chapter-epigraph::before { content: "“"; }\n'
+        '.chapter-epigraph::after { content: "”"; }\n'
         '.cover-page { margin: 0; padding: 0; text-align: center; }\n'
         '.cover { margin: 0; padding: 0; text-align: center; }\n'
         '.cover img { display: block; max-width: 100%; max-height: 100vh; margin: 0 auto; }\n'
