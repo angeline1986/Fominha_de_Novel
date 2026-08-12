@@ -2,6 +2,9 @@
   "site": "https://www.zhenhunxiaoshuo.com",
   "input_csv": "input/chapters.csv",
   "output_dir": "output",
+  "json_output_dir": "output/json",
+  "epub_output_dir": "output/epub",
+  "cover_path": "input/assets/cover.jpg",
   "cache_dir": "cache",
   "selectors": {
     "chapter_title": "h1.article-title",

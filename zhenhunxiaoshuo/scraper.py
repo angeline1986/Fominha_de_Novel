@@ -9,13 +9,22 @@ from .storage import save_book
 
 ROOT = Path(__file__).resolve().parent
 
+
 def load_config():
-    return json.loads((ROOT / "config_zhenhunxiaoshuo.json").read_text(encoding="utf-8"))
+    return json.loads(
+        (ROOT / "config_zhenhunxiaoshuo.json").read_text(encoding="utf-8")
+    )
+
 
 def load_chapter_rows(csv_path):
     with Path(csv_path).open("r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
-        if not reader.fieldnames or "Título" not in reader.fieldnames or "Link" not in reader.fieldnames:
+
+        if (
+            not reader.fieldnames
+            or "Título" not in reader.fieldnames
+            or "Link" not in reader.fieldnames
+        ):
             raise ValueError("CSV deve conter as colunas 'Título' e 'Link'.")
 
         rows = []
@@ -34,10 +43,14 @@ def load_chapter_rows(csv_path):
 
         return rows
 
+
 def run(limit=None):
     config = load_config()
     rows = load_chapter_rows(ROOT / config["input_csv"])
+
     if limit is not None:
+        if limit <= 0:
+            raise ValueError("O limite de capítulos deve ser maior que zero.")
         rows = rows[:limit]
 
     http = config["http"]
@@ -49,28 +62,41 @@ def run(limit=None):
     )
 
     chapters = []
+
     for index, row in enumerate(rows, start=1):
         print(f"[{index}/{len(rows)}] {row['title']} -> {row['url']}")
         html = client.get_text(row["url"])
         chapter = parse_chapter(html, row["url"], row["title"])
         chapters.append(chapter)
+
         print(
-            f"  título={chapter.chapter_title!r} | "
+            f" título={chapter.chapter_title!r} | "
             f"lead={chapter.chapter_lead!r} | "
             f"parágrafos={chapter.paragraph_count} | "
             f"csv_match={chapter.title_matches_csv}"
         )
 
-    output = ROOT / config["output_dir"] / "di_wang_gong_lue.json"
+    output_dir = ROOT / config.get("json_output_dir", "output/json")
+    output = output_dir / "di_wang_gong_lue.json"
     save_book(chapters, output)
+
     print(f"\nOK: {len(chapters)} capítulos salvos em {output}")
     return output
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Extrator independente zhenhunxiaoshuo")
-    parser.add_argument("--limit", type=int, default=None, help="Extrair somente os N primeiros registros")
+    parser = argparse.ArgumentParser(
+        description="Extrator independente zhenhunxiaoshuo"
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Extrair somente os N primeiros registros",
+    )
     args = parser.parse_args()
     run(limit=args.limit)
+
 
 if __name__ == "__main__":
     main()
