@@ -7,6 +7,8 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from zhenhunxiaoshuo.identity_contract import build_ref_id
+
 ROOT = Path(__file__).resolve().parent
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -28,13 +30,10 @@ def _book_value(book, key, default=""):
 def _cover_candidates(config):
     candidates = []
 
-    cover_path = config.get("cover_path")
-    if isinstance(cover_path, str) and cover_path.strip():
-        candidates.append(PROJECT_ROOT / cover_path.strip())
-
     book_cover = config.get("book", {}).get("cover")
     if isinstance(book_cover, str) and book_cover.strip():
         candidates.append(PROJECT_ROOT / book_cover.strip())
+
     top_cover = config.get("cover_image")
     if isinstance(top_cover, str) and top_cover.strip():
         candidates.append(PROJECT_ROOT / top_cover.strip())
@@ -44,12 +43,12 @@ def _cover_candidates(config):
         path = cover_cfg.get("path")
         if isinstance(path, str) and path.strip():
             candidates.append(PROJECT_ROOT / path.strip())
-    for folder in ("producao_epub/input/capas",):
-        for name in (
-            "cover.jpg", "cover.jpeg", "cover.png",
-            "capa.jpg", "capa.jpeg", "capa.png",
-        ):
-            candidates.append(PROJECT_ROOT / folder / name)
+
+    # Estrutura atual pós-reorganização.
+    cover_input = PROJECT_ROOT / "producao_epub" / "input" / "capas"
+    for name in ("cover.jpg", "cover.jpeg", "cover.png",
+                 "capa.jpg", "capa.jpeg", "capa.png"):
+        candidates.append(cover_input / name)
 
     seen = set()
     result = []
@@ -110,18 +109,33 @@ def _chapter_presentation(chapter, index, mode):
     return chapter_title, lead, False
 
 
-def _chapter_xhtml(chapter, index, language, mode):
-    visual_title, epigraph, transformed = _chapter_presentation(
-        chapter, index, mode
+def _chapter_identity(chapter, index):
+    ref_id = chapter.get("ref_id") or build_ref_id(
+        chapter.get("source_url"),
+        chapter.get("source_position") or index,
     )
+    chapter_type = chapter.get("chapter_type") or "chapter"
+    story_number = chapter.get("story_chapter_number")
+    return ref_id, chapter_type, story_number
+
+
+def _chapter_xhtml(chapter, index, language, mode):
+    visual_title, epigraph, transformed = _chapter_presentation(chapter, index, mode)
     title = html.escape(str(visual_title))
+    ref_id, chapter_type, story_number = _chapter_identity(chapter, index)
+
+    attrs = [
+        f'id="zref-{html.escape(ref_id, quote=True)}"',
+        f'data-ref-id="{html.escape(ref_id, quote=True)}"',
+        f'data-chapter-type="{html.escape(str(chapter_type), quote=True)}"',
+    ]
+    if story_number is not None:
+        attrs.append(f'data-story-number="{int(story_number)}"')
+
     paragraphs = chapter.get("paragraphs") or []
     body = []
     if epigraph:
         if mode == MODE_NO_REDUNDANCY and transformed:
-            # IMPORTANTE:
-            # As aspas NÃO fazem parte do texto, para o Calibre não removê-las
-            # ou traduzi-las de forma inconsistente. Elas são inseridas pelo CSS.
             body.append(
                 '<p class="chapter-epigraph">'
                 + html.escape(str(epigraph))
@@ -135,15 +149,17 @@ def _chapter_xhtml(chapter, index, language, mode):
             )
     for paragraph in paragraphs:
         body.append(f"<p>{html.escape(str(paragraph))}</p>")
+
     return (
         '<?xml version="1.0" encoding="utf-8"?>\n'
         f'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{html.escape(language)}">\n'
         '<head>\n'
         '  <meta charset="utf-8"/>\n'
+        f'  <meta name="zhenhun-ref-id" content="{html.escape(ref_id, quote=True)}"/>\n'
         f'  <title>{title}</title>\n'
         '  <link rel="stylesheet" type="text/css" href="../Styles/book.css"/>\n'
         '</head>\n'
-        '<body>\n'
+        f'<body {" ".join(attrs)}>\n'
         f'  <h1>{title}</h1>\n'
         f'  {"".join(body)}\n'
         '</body>\n'
@@ -212,6 +228,7 @@ def _content_opf(book_title, author, language, uid, chapters, cover_info=None):
     ]
     spine = []
     metadata_extra = []
+
     if cover_info:
         cover_filename, cover_media = cover_info
         manifest.extend([
@@ -221,12 +238,14 @@ def _content_opf(book_title, author, language, uid, chapters, cover_info=None):
         ])
         metadata_extra.append('<meta name="cover" content="cover-image"/>')
         spine.append('<itemref idref="cover-page"/>')
+
     for i in range(1, len(chapters) + 1):
         manifest.append(
             f'<item id="chapter_{i:03d}" href="Text/chapter_{i:03d}.xhtml" '
             'media-type="application/xhtml+xml"/>'
         )
         spine.append(f'<itemref idref="chapter_{i:03d}"/>')
+
     return (
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="bookid">\n'
@@ -274,19 +293,24 @@ def build_epub(json_path, output_path=None, mode=MODE_STANDARD):
     if not chapters:
         raise ValueError("O JSON não contém capítulos.")
 
-    cover_path = find_cover(config)
-    if cover_path is None:
-        configured = config.get("cover_path", "producao_epub/input/capas/cover.jpg")
-        expected = PROJECT_ROOT / configured
-        raise FileNotFoundError(
-            f"Capa obrigatória não encontrada: {expected}"
-        )
+    ref_ids = []
+    for index, chapter in enumerate(chapters, start=1):
+        ref_id, _, _ = _chapter_identity(chapter, index)
+        if ref_id in ref_ids:
+            raise ValueError(f"ref_id duplicado no JSON: {ref_id}")
+        ref_ids.append(ref_id)
 
     output_path = Path(output_path) if output_path else _output_path(config, mode)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    suffix = ".jpg" if cover_path.suffix.lower() in {".jpg", ".jpeg"} else ".png"
-    cover_filename = f"cover{suffix}"
-    cover_info = (cover_filename, _cover_media_type(cover_path))
+
+    cover_path = find_cover(config)
+    cover_info = None
+    cover_filename = None
+    if cover_path:
+        suffix = ".jpg" if cover_path.suffix.lower() in {".jpg", ".jpeg"} else ".png"
+        cover_filename = f"cover{suffix}"
+        cover_info = (cover_filename, _cover_media_type(cover_path))
+
     uid = f"urn:uuid:{uuid.uuid4()}"
     container_xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -295,6 +319,7 @@ def build_epub(json_path, output_path=None, mode=MODE_STANDARD):
         'media-type="application/oebps-package+xml"/></rootfiles>\n'
         '</container>'
     )
+
     css = (
         'body { font-family: serif; line-height: 1.6; margin: 5%; }\n'
         'h1 { text-align: center; margin: 0 0 1.5em 0; }\n'
@@ -308,6 +333,7 @@ def build_epub(json_path, output_path=None, mode=MODE_STANDARD):
         '.cover { margin: 0; padding: 0; text-align: center; }\n'
         '.cover img { display: block; max-width: 100%; max-height: 100vh; margin: 0 auto; }\n'
     )
+
     with zipfile.ZipFile(output_path, "w") as zf:
         info = zipfile.ZipInfo("mimetype")
         info.compress_type = zipfile.ZIP_STORED
@@ -329,16 +355,19 @@ def build_epub(json_path, output_path=None, mode=MODE_STANDARD):
             compress_type=zipfile.ZIP_DEFLATED,
         )
         zf.writestr("OEBPS/Styles/book.css", css, compress_type=zipfile.ZIP_DEFLATED)
-        zf.writestr(
-            f"OEBPS/Images/{cover_filename}",
-            cover_path.read_bytes(),
-            compress_type=zipfile.ZIP_DEFLATED,
-        )
-        zf.writestr(
-            "OEBPS/cover.xhtml",
-            _cover_xhtml(book_title, cover_filename, language),
-            compress_type=zipfile.ZIP_DEFLATED,
-        )
+
+        if cover_path:
+            zf.writestr(
+                f"OEBPS/Images/{cover_filename}",
+                cover_path.read_bytes(),
+                compress_type=zipfile.ZIP_DEFLATED,
+            )
+            zf.writestr(
+                "OEBPS/cover.xhtml",
+                _cover_xhtml(book_title, cover_filename, language),
+                compress_type=zipfile.ZIP_DEFLATED,
+            )
+
         for i, chapter in enumerate(chapters, start=1):
             zf.writestr(
                 f"OEBPS/Text/chapter_{i:03d}.xhtml",

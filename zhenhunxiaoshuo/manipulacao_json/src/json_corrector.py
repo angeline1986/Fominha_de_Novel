@@ -6,6 +6,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from zhenhunxiaoshuo.identity_contract import apply_identity_to_adjusted_json
+
 MODULE_ROOT = Path(__file__).resolve().parents[1]
 REFERENCE_FILE = MODULE_ROOT / "input" / "referencias" / "physical_book_overrides.json"
 OUTPUT_DIR = MODULE_ROOT / "output" / "revisados"
@@ -341,7 +343,7 @@ def _normalize(data: dict[str, Any]) -> dict[str, Any]:
         "review": review,
     }
 
-    return result
+    return apply_identity_to_adjusted_json(result)
 
 
 def correct_json_file(input_path: str | Path) -> dict[str, Any]:
