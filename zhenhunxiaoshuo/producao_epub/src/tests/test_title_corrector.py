@@ -177,6 +177,106 @@ class TitleCorrectorTests(unittest.TestCase):
         self.assertIn("Capítulo 1 - O assassinato na Cidade Imperial", nav)
         self.assertTrue(result["spine_preserved"])
 
+    def test_uses_csv_order_instead_of_original_chapter_number(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original = root / "original.epub"
+            translated = root / "translated.epub"
+            csv_path = root / "comparacao_capitulos.csv"
+            _write_epub(original, [
+                ("chapter_024.xhtml", "第二十五章魏紫衣"),
+                ("chapter_025.xhtml", "第二十五章-归来庄"),
+            ])
+            _write_epub(translated, [
+                ("chapter_024.xhtml", "Capítulo Vinte e Cinco: Wei Ziyi"),
+                ("chapter_025.xhtml", "Capítulo Vinte e Cinco - Retorno à Vila"),
+            ])
+            csv_path.write_text(
+                "Capítulo;Título no DOCX;Título no EPUB;Comparação\n"
+                "24;Wei Ziyi;Wei Ziyi;IGUAL\n"
+                "25;Gui Lai;Retorno à Vila;DIFERENTE\n",
+                encoding="utf-8",
+            )
+
+            result = correct_epub_titles(original, translated, csv_path)
+
+            with zipfile.ZipFile(result["output"]) as archive:
+                chapter_24 = archive.read(
+                    "OEBPS/text/chapter_024.xhtml"
+                ).decode("utf-8")
+                chapter_25 = archive.read(
+                    "OEBPS/text/chapter_025.xhtml"
+                ).decode("utf-8")
+
+        self.assertIn("<h1>Capítulo 24 - Wei Ziyi</h1>", chapter_24)
+        self.assertIn("<h1>Capítulo 25 - Gui Lai</h1>", chapter_25)
+
+    def test_aborts_on_gross_csv_anchor_mismatch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original = root / "original.epub"
+            translated = root / "translated.epub"
+            csv_path = root / "comparacao_capitulos.csv"
+            _write_epub(original, [
+                ("chapter_001.xhtml", "第一章-王城命案"),
+            ])
+            _write_epub(translated, [
+                ("chapter_001.xhtml", "Capítulo 1 - Retorno à Vila"),
+            ])
+            csv_path.write_text(
+                "Capítulo;Título no DOCX;Título no EPUB;Comparação\n"
+                "1;Wei Ziyi;Wei Ziyi;IGUAL\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaises(StructuralMatchError):
+                correct_epub_titles(original, translated, csv_path)
+
+    def test_allows_minor_csv_anchor_variation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original = root / "original.epub"
+            translated = root / "translated.epub"
+            csv_path = root / "comparacao_capitulos.csv"
+            _write_epub(original, [
+                ("chapter_001.xhtml", "第九十六章-大战前夕"),
+            ])
+            _write_epub(translated, [
+                ("chapter_001.xhtml", "96 - Na véspera da Grande Guerra"),
+            ])
+            csv_path.write_text(
+                "Capítulo;Título no DOCX;Título no EPUB;Comparação\n"
+                "1;Véspera da Grande Guerra;Véspera da Grande Guerra;DIFERENTE\n",
+                encoding="utf-8",
+            )
+
+            result = correct_epub_titles(original, translated, csv_path)
+
+        self.assertEqual(result["corrected_count"], 1)
+
+    def test_aborts_when_csv_numbered_rows_do_not_match_chapters(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original = root / "original.epub"
+            translated = root / "translated.epub"
+            csv_path = root / "comparacao_capitulos.csv"
+            _write_epub(original, [
+                ("chapter_001.xhtml", "第一章-王城命案"),
+                ("chapter_002.xhtml", "第二章-九玄机"),
+            ])
+            _write_epub(translated, [
+                ("chapter_001.xhtml", "Capítulo 1"),
+                ("chapter_002.xhtml", "Capítulo 2"),
+            ])
+            csv_path.write_text(
+                "Capítulo;Título no DOCX;Título no EPUB;Comparação\n"
+                "1;Um;Capítulo 1;IGUAL\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaises(StructuralMatchError):
+                correct_epub_titles(original, translated, csv_path)
+
 
 if __name__ == "__main__":
     unittest.main()

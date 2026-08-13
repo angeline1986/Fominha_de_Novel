@@ -29,17 +29,12 @@ TITLE_TAG_RE = re.compile(
     r"(<title\b[^>]*>)(.*?)(</title>)",
     re.IGNORECASE | re.DOTALL,
 )
-PT_CHAPTER_RE = re.compile(r"\bCap[ií]tulo\s+(\d+)\b", re.IGNORECASE)
-CN_CHAPTER_RE = re.compile(
-    r"第\s*([0-9零〇一二两三四五六七八九十百千]+)\s*章"
-)
-
-_CN_DIGITS = {
-    "零": 0, "〇": 0, "一": 1, "二": 2, "两": 2,
-    "三": 3, "四": 4, "五": 5, "六": 6,
-    "七": 7, "八": 8, "九": 9,
+WORD_RE = re.compile(r"[0-9A-Za-zÀ-ÖØ-öø-ÿ]+", re.UNICODE)
+ANCHOR_STOPWORDS = {
+    "a", "as", "o", "os", "um", "uma", "uns", "umas",
+    "de", "da", "das", "do", "dos", "em", "na", "nas",
+    "no", "nos", "e", "ao", "aos", "capitulo", "capítulo",
 }
-_CN_UNITS = {"十": 10, "百": 100, "千": 1000}
 
 
 class StructuralMatchError(ValueError):
@@ -90,6 +85,11 @@ def _read_title_csv(csv_path):
         "rows": rows,
         "chapter_titles": chapter_titles,
         "special_rows": special_rows,
+        "numbered_rows": [
+            row
+            for row in rows
+            if str(row.get("Capítulo") or "").strip().isdigit()
+        ],
     }
 
 
@@ -107,34 +107,6 @@ def load_title_map(csv_path):
     }
 
 
-def _chinese_to_int(text):
-    text = (text or "").strip()
-    if not text:
-        return None
-    if text.isdigit():
-        return int(text)
-
-    total = 0
-    current = 0
-    found = False
-
-    for char in text:
-        if char in _CN_DIGITS:
-            current = _CN_DIGITS[char]
-            found = True
-        elif char in _CN_UNITS:
-            found = True
-            unit = _CN_UNITS[char]
-            if current == 0:
-                current = 1
-            total += current * unit
-            current = 0
-        else:
-            return None
-
-    return total + current if found else None
-
-
 def _extract_current_heading_from_text(text, fallback):
     match = HEADING_RE.search(text)
     if not match:
@@ -149,22 +121,6 @@ def _extract_current_heading(path):
         path.read_text(encoding="utf-8"),
         path.stem,
     )
-
-
-def _chapter_number_from_original_title(title):
-    title = str(title or "")
-    if "番外" in title or "Extra" in title:
-        return None
-
-    pt_match = PT_CHAPTER_RE.search(title)
-    if pt_match:
-        return int(pt_match.group(1))
-
-    cn_match = CN_CHAPTER_RE.search(title)
-    if cn_match:
-        return _chinese_to_int(cn_match.group(1))
-
-    return None
 
 
 def _replace_visible_title(path, new_title):
@@ -364,38 +320,84 @@ def validate_structural_match(original_epub_path, translated_epub_path):
     }
 
 
+def _normalize_anchor_words(text):
+    normalized = html.unescape(str(text or "")).lower()
+    normalized = normalized.replace("_", " ").replace("-", " ")
+    return {
+        word
+        for word in WORD_RE.findall(normalized)
+        if len(word) > 2 and word not in ANCHOR_STOPWORDS
+    }
+
+
+def _csv_epub_anchor_matches(csv_title, current_title):
+    csv_words = _normalize_anchor_words(csv_title)
+    current_words = _normalize_anchor_words(current_title)
+
+    if not csv_words or not current_words:
+        return True
+
+    overlap = csv_words & current_words
+    return bool(overlap)
+
+
+def _validate_csv_alignment(csv_data, validation):
+    numbered_rows = csv_data["numbered_rows"]
+    chapter_count = validation["chapter_count"]
+
+    if len(numbered_rows) != chapter_count:
+        raise StructuralMatchError(
+            "ERRO: o CSV de comparação não possui correspondência física "
+            "1:1 com os XHTMLs validados.\n"
+            f"CSV: {len(numbered_rows)} linhas numéricas\n"
+            f"EPUB: {chapter_count} capítulos"
+        )
+
+
 def _build_title_mapping(validation, csv_data, translated_root):
-    title_by_number = csv_data["chapter_titles"]
+    _validate_csv_alignment(csv_data, validation)
+    numbered_rows = csv_data["numbered_rows"]
     mapping = []
 
-    for original_name, translated_name in zip(
+    for position, (original_name, translated_name, csv_row) in enumerate(zip(
         validation["original"]["spine_chapters"],
         validation["translated"]["spine_chapters"],
-    ):
+        numbered_rows,
+    ), start=1):
         original_title = validation["original"]["headings"].get(
             original_name,
             Path(original_name).stem,
         )
-        chapter_number = _chapter_number_from_original_title(original_title)
         translated_path = translated_root / translated_name
         current_title = _extract_current_heading(translated_path)
-        editorial_title = (
-            title_by_number.get(chapter_number)
-            if chapter_number is not None
-            else None
-        )
+        csv_epub_title = str(csv_row.get("Título no EPUB") or "").strip()
+        editorial_title = str(csv_row.get("Título no DOCX") or "").strip()
+        csv_chapter = int(str(csv_row.get("Capítulo") or "").strip())
+
+        if not _csv_epub_anchor_matches(csv_epub_title, current_title):
+            raise StructuralMatchError(
+                "ERRO: o CSV de comparação não parece alinhado ao EPUB "
+                "traduzido.\n"
+                f"Divergência encontrada na posição {position}:\n"
+                f"XHTML: {Path(translated_name).name}\n"
+                f"CSV Título no EPUB: {csv_epub_title}\n"
+                f"EPUB traduzido: {current_title}"
+            )
+
         new_title = (
-            build_full_title(chapter_number, editorial_title)
+            build_full_title(csv_chapter, editorial_title)
             if editorial_title
             else current_title
         )
 
         mapping.append({
+            "position": position,
             "filename": Path(translated_name).name,
             "href": translated_name,
             "xhtml": translated_path,
             "original_title": original_title,
-            "chapter_number": chapter_number,
+            "csv_chapter": csv_chapter,
+            "csv_epub_title": csv_epub_title,
             "current_title": current_title,
             "new_title": new_title,
         })

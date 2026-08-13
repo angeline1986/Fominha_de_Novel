@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import zipfile
+from datetime import datetime
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
@@ -121,6 +122,15 @@ def main_header():
     separator()
 
 
+def file_timestamp(path):
+    try:
+        return datetime.fromtimestamp(
+            Path(path).stat().st_mtime
+        ).strftime("[%d-%m-%y %H:%M:%S]")
+    except OSError:
+        return "[-- -- -- --:--:--]"
+
+
 def select_file(files, heading):
     files = list(files)
 
@@ -130,7 +140,7 @@ def select_file(files, heading):
 
     print(f"\n{bold(heading)}:")
     for index, path in enumerate(files, start=1):
-        print(f"  {green(index)}. {path.name}")
+        print(f"  {green(index)}. {path.name}  {cyan(file_timestamp(path))}")
     print(f"  {green(0)}. Voltar")
 
     value = ask_number(
@@ -228,7 +238,10 @@ def select_post_translation_file(files, heading, kind):
 
     print(f"\n{bold(heading)}:")
     for index, path in enumerate(files, start=1):
-        print(f"  {green(index)}. {bold(_post_translation_label(path, kind))}")
+        print(
+            f"  {green(index)}. {bold(_post_translation_label(path, kind))}  "
+            f"{cyan(file_timestamp(path))}"
+        )
         print(f"     └─ {_post_translation_path(path)}")
     print(f"\n  {green(0)}. Voltar")
 
