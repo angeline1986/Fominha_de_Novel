@@ -330,39 +330,138 @@ def _normalize_anchor_words(text):
     }
 
 
+def _normalize_title_anchor(text):
+    normalized = html.unescape(str(text or "")).lower()
+    normalized = re.sub(r"\[[^\]]+\]", " ", normalized)
+    normalized = normalized.replace("(", " ").replace(")", " ")
+    normalized = normalized.replace("_", " ").replace("-", " ")
+    normalized = re.sub(r"\bcap[ií]tulo\b", " ", normalized)
+    normalized = re.sub(r"\bextra\b", " ", normalized)
+    normalized = re.sub(r"\b[0-9]+\b", " ", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    words = [
+        word
+        for word in WORD_RE.findall(normalized)
+        if word not in ANCHOR_STOPWORDS
+    ]
+    return " ".join(words)
+
+
+def _extract_visible_chapter_number(title):
+    match = re.search(r"\bcap[ií]tulo\s+([0-9]+)\b", str(title or ""), re.I)
+    if match:
+        return int(match.group(1))
+    return None
+
+
+def _looks_like_extra_title(title):
+    text = str(title or "").lower()
+    return "extra" in text or "bônus" in text or "bonus" in text
+
+
 def _csv_epub_anchor_matches(csv_title, current_title):
-    csv_words = _normalize_anchor_words(csv_title)
-    current_words = _normalize_anchor_words(current_title)
+    csv_anchor = _normalize_title_anchor(csv_title)
+    current_anchor = _normalize_title_anchor(current_title)
 
-    if not csv_words or not current_words:
-        return True
+    if not csv_anchor or not current_anchor:
+        return False
 
-    overlap = csv_words & current_words
-    return bool(overlap)
+    return (
+        csv_anchor == current_anchor
+        or csv_anchor in current_anchor
+    )
 
 
-def _validate_csv_alignment(csv_data, validation):
-    numbered_rows = csv_data["numbered_rows"]
-    chapter_count = validation["chapter_count"]
+def _find_csv_row_for_title(numbered_rows, current_title, start_index):
+    candidates = []
+    current_number = _extract_visible_chapter_number(current_title)
 
-    if len(numbered_rows) != chapter_count:
+    for index, row in enumerate(numbered_rows[start_index:], start=start_index):
+        csv_epub_title = str(row.get("Título no EPUB") or "").strip()
+        if not _csv_epub_anchor_matches(csv_epub_title, current_title):
+            continue
+
+        csv_chapter = int(str(row.get("Capítulo") or "").strip())
+        candidates.append((index, row, csv_chapter))
+
+    if not candidates:
         raise StructuralMatchError(
-            "ERRO: o CSV de comparação não possui correspondência física "
-            "1:1 com os XHTMLs validados.\n"
-            f"CSV: {len(numbered_rows)} linhas numéricas\n"
-            f"EPUB: {chapter_count} capítulos"
+            "ERRO: nenhuma correspondência confiável foi encontrada no CSV "
+            "de comparação.\n"
+            f"EPUB traduzido: {current_title}"
         )
+
+    ranked_candidates = sorted(
+        candidates,
+        key=lambda candidate: len(
+            _normalize_title_anchor(candidate[1].get("Título no EPUB")).split()
+        ),
+        reverse=True,
+    )
+    best_score = len(
+        _normalize_title_anchor(ranked_candidates[0][1].get("Título no EPUB")).split()
+    )
+    best_candidates = [
+        candidate
+        for candidate in ranked_candidates
+        if len(
+            _normalize_title_anchor(candidate[1].get("Título no EPUB")).split()
+        ) == best_score
+    ]
+    if current_number is not None:
+        numbered_candidates = [
+            candidate
+            for candidate in best_candidates
+            if candidate[2] == current_number
+        ]
+        if len(numbered_candidates) == 1:
+            return numbered_candidates[0][0], numbered_candidates[0][1]
+
+    if len(best_candidates) == 1:
+        return best_candidates[0][0], best_candidates[0][1]
+    best_anchors = {
+        _normalize_title_anchor(candidate[1].get("Título no EPUB"))
+        for candidate in best_candidates
+    }
+    if len(best_anchors) == 1:
+        first_best = min(best_candidates, key=lambda candidate: candidate[0])
+        return first_best[0], first_best[1]
+
+    first_index, first_row, _ = candidates[0]
+    same_anchor_run = [candidates[0]]
+    first_anchor = _normalize_title_anchor(first_row.get("Título no EPUB"))
+
+    for candidate in candidates[1:]:
+        index, row, _ = candidate
+        if index != same_anchor_run[-1][0] + 1:
+            break
+        if _normalize_title_anchor(row.get("Título no EPUB")) != first_anchor:
+            break
+        same_anchor_run.append(candidate)
+
+    if len(same_anchor_run) == len(candidates):
+        return first_index, first_row
+
+    preview = ", ".join(
+        f"{candidate[2]}:{candidate[1].get('Título no EPUB')}"
+        for candidate in candidates[:5]
+    )
+    raise StructuralMatchError(
+        "ERRO: mais de uma correspondência plausível foi encontrada no CSV "
+        "de comparação.\n"
+        f"EPUB traduzido: {current_title}\n"
+        f"Candidatas: {preview}"
+    )
 
 
 def _build_title_mapping(validation, csv_data, translated_root):
-    _validate_csv_alignment(csv_data, validation)
     numbered_rows = csv_data["numbered_rows"]
     mapping = []
+    next_csv_index = 0
 
-    for position, (original_name, translated_name, csv_row) in enumerate(zip(
+    for position, (original_name, translated_name) in enumerate(zip(
         validation["original"]["spine_chapters"],
         validation["translated"]["spine_chapters"],
-        numbered_rows,
     ), start=1):
         original_title = validation["original"]["headings"].get(
             original_name,
@@ -370,19 +469,17 @@ def _build_title_mapping(validation, csv_data, translated_root):
         )
         translated_path = translated_root / translated_name
         current_title = _extract_current_heading(translated_path)
+        search_start = 0 if _looks_like_extra_title(current_title) else next_csv_index
+        csv_index, csv_row = _find_csv_row_for_title(
+            numbered_rows,
+            current_title,
+            search_start,
+        )
+        if not _looks_like_extra_title(current_title):
+            next_csv_index = csv_index + 1
         csv_epub_title = str(csv_row.get("Título no EPUB") or "").strip()
         editorial_title = str(csv_row.get("Título no DOCX") or "").strip()
         csv_chapter = int(str(csv_row.get("Capítulo") or "").strip())
-
-        if not _csv_epub_anchor_matches(csv_epub_title, current_title):
-            raise StructuralMatchError(
-                "ERRO: o CSV de comparação não parece alinhado ao EPUB "
-                "traduzido.\n"
-                f"Divergência encontrada na posição {position}:\n"
-                f"XHTML: {Path(translated_name).name}\n"
-                f"CSV Título no EPUB: {csv_epub_title}\n"
-                f"EPUB traduzido: {current_title}"
-            )
 
         new_title = (
             build_full_title(csv_chapter, editorial_title)
@@ -397,6 +494,7 @@ def _build_title_mapping(validation, csv_data, translated_root):
             "xhtml": translated_path,
             "original_title": original_title,
             "csv_chapter": csv_chapter,
+            "csv_index": csv_index,
             "csv_epub_title": csv_epub_title,
             "current_title": current_title,
             "new_title": new_title,

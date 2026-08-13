@@ -211,6 +211,60 @@ class TitleCorrectorTests(unittest.TestCase):
         self.assertIn("<h1>Capítulo 24 - Wei Ziyi</h1>", chapter_24)
         self.assertIn("<h1>Capítulo 25 - Gui Lai</h1>", chapter_25)
 
+    def test_accepts_complete_csv_catalog_for_partial_epub(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original = root / "original.epub"
+            translated = root / "translated.epub"
+            csv_path = root / "comparacao_capitulos.csv"
+            selected = {
+                24: ("Wei Ziyi", "Wei Ziyi"),
+                25: ("Gui Lai", "Retorno à Vila"),
+                129: ("Expedição", "Um Encontro Fortuito"),
+                144: ("Miragem", "Miragem"),
+                151: ("Som maligno", "Som Demoníaco"),
+            }
+            rows = ["Capítulo;Título no DOCX;Título no EPUB;Comparação\n"]
+            for number in range(1, 202):
+                docx_title, epub_title = selected.get(
+                    number,
+                    ("", f"Catálogo {number}"),
+                )
+                rows.append(f"{number};{docx_title};{epub_title};DIFERENTE\n")
+            csv_path.write_text("".join(rows), encoding="utf-8")
+            _write_epub(original, [
+                ("chapter_001.xhtml", "第二十五章魏紫衣"),
+                ("chapter_002.xhtml", "第二十五章-归来庄"),
+                ("chapter_003.xhtml", "第一百二十九章-出征"),
+                ("chapter_004.xhtml", "第一百四十四章-蜃影"),
+                ("chapter_005.xhtml", "第一百五十一章-魔音"),
+            ])
+            _write_epub(translated, [
+                ("chapter_001.xhtml", "Capítulo Vinte e Quatro: Wei Ziyi"),
+                ("chapter_002.xhtml", "Capítulo Vinte e Cinco - Retorno à Vila"),
+                ("chapter_003.xhtml", "Capítulo 128 - Um Encontro Fortuito"),
+                ("chapter_004.xhtml", "Capítulo 144 - Miragem"),
+                ("chapter_005.xhtml", "Capítulo 151 - Som Demoníaco"),
+            ])
+
+            result = correct_epub_titles(original, translated, csv_path)
+
+            with zipfile.ZipFile(result["output"]) as archive:
+                titles = [
+                    archive.read(f"OEBPS/text/chapter_{index:03d}.xhtml").decode(
+                        "utf-8"
+                    )
+                    for index in range(1, 6)
+                ]
+
+        self.assertEqual(result["titles_in_csv"], 201)
+        self.assertEqual(result["mapped_entries"], 5)
+        self.assertIn("<h1>Capítulo 24 - Wei Ziyi</h1>", titles[0])
+        self.assertIn("<h1>Capítulo 25 - Gui Lai</h1>", titles[1])
+        self.assertIn("<h1>Capítulo 129 - Expedição</h1>", titles[2])
+        self.assertIn("<h1>Capítulo 144 - Miragem</h1>", titles[3])
+        self.assertIn("<h1>Capítulo 151 - Som maligno</h1>", titles[4])
+
     def test_aborts_on_gross_csv_anchor_mismatch(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -254,7 +308,38 @@ class TitleCorrectorTests(unittest.TestCase):
 
         self.assertEqual(result["corrected_count"], 1)
 
-    def test_aborts_when_csv_numbered_rows_do_not_match_chapters(self):
+    def test_preserves_current_title_when_docx_title_is_empty(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original = root / "original.epub"
+            translated = root / "translated.epub"
+            csv_path = root / "comparacao_capitulos.csv"
+            _write_epub(original, [
+                ("chapter_001.xhtml", "番外"),
+            ])
+            _write_epub(translated, [
+                ("chapter_001.xhtml", "Capítulo 154 [520 Capítulo Extra] Juventude"),
+            ])
+            csv_path.write_text(
+                "Capítulo;Título no DOCX;Título no EPUB;Comparação\n"
+                "154;;[520 Capítulo Extra] Juventude;DIFERENTE\n",
+                encoding="utf-8",
+            )
+
+            result = correct_epub_titles(original, translated, csv_path)
+
+            with zipfile.ZipFile(result["output"]) as archive:
+                chapter = archive.read(
+                    "OEBPS/text/chapter_001.xhtml"
+                ).decode("utf-8")
+
+        self.assertEqual(result["corrected_count"], 0)
+        self.assertIn(
+            "<h1>Capítulo 154 [520 Capítulo Extra] Juventude</h1>",
+            chapter,
+        )
+
+    def test_aborts_on_ambiguous_catalog_match(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             original = root / "original.epub"
@@ -262,15 +347,35 @@ class TitleCorrectorTests(unittest.TestCase):
             csv_path = root / "comparacao_capitulos.csv"
             _write_epub(original, [
                 ("chapter_001.xhtml", "第一章-王城命案"),
-                ("chapter_002.xhtml", "第二章-九玄机"),
             ])
             _write_epub(translated, [
-                ("chapter_001.xhtml", "Capítulo 1"),
-                ("chapter_002.xhtml", "Capítulo 2"),
+                ("chapter_001.xhtml", "Alfa Beta Gamma"),
             ])
             csv_path.write_text(
                 "Capítulo;Título no DOCX;Título no EPUB;Comparação\n"
-                "1;Um;Capítulo 1;IGUAL\n",
+                "1;Um;Alfa Beta;DIFERENTE\n"
+                "2;Dois;Beta Gamma;DIFERENTE\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaises(StructuralMatchError):
+                correct_epub_titles(original, translated, csv_path)
+
+    def test_aborts_when_catalog_match_is_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original = root / "original.epub"
+            translated = root / "translated.epub"
+            csv_path = root / "comparacao_capitulos.csv"
+            _write_epub(original, [
+                ("chapter_001.xhtml", "第一章-王城命案"),
+            ])
+            _write_epub(translated, [
+                ("chapter_001.xhtml", "Capítulo 1 - Inexistente"),
+            ])
+            csv_path.write_text(
+                "Capítulo;Título no DOCX;Título no EPUB;Comparação\n"
+                "1;Um;Outro título;DIFERENTE\n",
                 encoding="utf-8",
             )
 
