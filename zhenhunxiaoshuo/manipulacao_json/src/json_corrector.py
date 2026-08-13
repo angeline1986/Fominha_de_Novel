@@ -1,355 +1,341 @@
+from __future__ import annotations
+
+import copy
 import json
 import re
-from copy import deepcopy
 from pathlib import Path
+from typing import Any
 
-ROOT = Path(__file__).resolve().parent
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-JSON_DIR = PROJECT_ROOT / "manipulacao_json" / "output" / "extraidos"
-REVIEWED_JSON_DIR = PROJECT_ROOT / "manipulacao_json" / "output" / "revisados"
-DEFAULT_REFERENCE_FILE = (
-    PROJECT_ROOT
-    / "manipulacao_json"
-    / "input"
-    / "referencias"
-    / "physical_book_overrides.json"
-)
+MODULE_ROOT = Path(__file__).resolve().parents[1]
+REFERENCE_FILE = MODULE_ROOT / "input" / "referencias" / "physical_book_overrides.json"
+OUTPUT_DIR = MODULE_ROOT / "output" / "revisados"
+# Compatibilidade com o menu atual, que importa este nome público.
+REVIEWED_JSON_DIR = OUTPUT_DIR
 
-_CN_DIGITS = {
-    "零": 0, "〇": 0, "一": 1, "二": 2, "两": 2,
-    "三": 3, "四": 4, "五": 5, "六": 6,
-    "七": 7, "八": 8, "九": 9,
-}
-_CN_UNITS = {"十": 10, "百": 100, "千": 1000}
+EXTRA_MARKERS = ("番外", "extra", "especial")
+ARABIC_PREFIX_RE = re.compile(r"^第\s*(\d+)\s*章")
+CHINESE_PREFIX_RE = re.compile(r"^第\s*([零〇一二三四五六七八九十百千万两]+)\s*章")
+LEAD_PREFIX_RE = re.compile(r"^(【)\s*第[^】]{0,30}?章")
 
 
-def chinese_to_int(text):
-    text = (text or "").strip()
-    if not text:
+class JsonCorrectionError(ValueError):
+    pass
+
+
+def _load_reference() -> dict[str, Any]:
+    if not REFERENCE_FILE.is_file():
+        raise JsonCorrectionError(f"Referência física não encontrada: {REFERENCE_FILE}")
+    return json.loads(REFERENCE_FILE.read_text(encoding="utf-8"))
+
+
+def _chinese_digit(ch: str) -> int:
+    values = {
+        "零": 0, "〇": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4,
+        "五": 5, "六": 6, "七": 7, "八": 8, "九": 9,
+    }
+    return values[ch]
+
+
+def chinese_number_to_int(value: str) -> int | None:
+    if not value:
         return None
-    if text.isdigit():
-        return int(text)
+    if value.isdigit():
+        return int(value)
 
     total = 0
-    current = 0
-    found = False
+    section = 0
+    number = 0
+    units = {"十": 10, "百": 100, "千": 1000, "万": 10000}
 
-    for char in text:
-        if char in _CN_DIGITS:
-            current = _CN_DIGITS[char]
-            found = True
-        elif char in _CN_UNITS:
-            found = True
-            unit = _CN_UNITS[char]
-            if current == 0:
-                current = 1
-            total += current * unit
-            current = 0
-        else:
-            return None
+    try:
+        for ch in value:
+            if ch in "零〇一二三四五六七八九两":
+                number = _chinese_digit(ch)
+                continue
 
-    return total + current if found else None
+            unit = units.get(ch)
+            if unit is None:
+                return None
+
+            if unit == 10000:
+                section = (section + number) * unit
+                total += section
+                section = 0
+                number = 0
+                continue
+
+            if number == 0:
+                number = 1
+            section += number * unit
+            number = 0
+
+        return total + section + number
+    except (KeyError, TypeError):
+        return None
 
 
-def int_to_chinese(number):
-    if number <= 0 or number >= 10000:
-        return str(number)
+def int_to_chinese(value: int) -> str:
+    if not 0 < value < 10000:
+        return str(value)
 
     digits = "零一二三四五六七八九"
-    units = [(1000, "千"), (100, "百"), (10, "十")]
-    remainder = number
-    parts = []
-    zero_pending = False
 
-    for value, unit in units:
-        digit = remainder // value
-        remainder %= value
+    if value < 10:
+        return digits[value]
+    if value < 20:
+        return "十" + (digits[value % 10] if value % 10 else "")
+    if value < 100:
+        tens, ones = divmod(value, 10)
+        return digits[tens] + "十" + (digits[ones] if ones else "")
+    if value < 1000:
+        hundreds, rest = divmod(value, 100)
+        result = digits[hundreds] + "百"
+        if not rest:
+            return result
+        if rest < 10:
+            return result + "零" + digits[rest]
+        return result + int_to_chinese(rest)
 
-        if digit:
-            if zero_pending and parts:
-                parts.append("零")
-                zero_pending = False
-            parts.append(digits[digit])
-            parts.append(unit)
-        elif parts and remainder:
-            zero_pending = True
-
-    if remainder:
-        if zero_pending and parts:
-            parts.append("零")
-        parts.append(digits[remainder])
-
-    result = "".join(parts)
-    if result.startswith("一十"):
-        result = result[1:]
-    return result
+    thousands, rest = divmod(value, 1000)
+    result = digits[thousands] + "千"
+    if not rest:
+        return result
+    if rest < 100:
+        return result + "零" + int_to_chinese(rest)
+    return result + int_to_chinese(rest)
 
 
-def is_extra(chapter):
-    title = str(chapter.get("chapter_title") or chapter.get("csv_title") or "")
-    lead = str(chapter.get("chapter_lead") or "")
-    return "番外" in title or "番外" in lead
+def _declared_number(title: str | None) -> int | None:
+    title = (title or "").strip()
+
+    match = ARABIC_PREFIX_RE.match(title)
+    if match:
+        return int(match.group(1))
+
+    match = CHINESE_PREFIX_RE.match(title)
+    if match:
+        return chinese_number_to_int(match.group(1))
+
+    return None
 
 
-def extract_declared_number(text):
-    text = str(text or "").strip()
-    match = re.match(
-        r"^第\s*([0-9零〇一二两三四五六七八九十百千]+)\s*章",
-        text,
-    )
-    if not match:
+def _lead_declared_number(lead: str | None) -> int | None:
+    lead = (lead or "").strip()
+    if not lead.startswith("【"):
         return None
-    return chinese_to_int(match.group(1))
+
+    inner = lead[1:].split("】", 1)[0].replace("-章", "章")
+    return _declared_number(inner)
 
 
-def extract_lead_number(lead):
-    lead = str(lead or "").strip()
-    match = re.match(
-        r"^【\s*第\s*([0-9零〇一二两三四五六七八九十百千]+)\s*章",
-        lead,
-    )
-    if not match:
-        return None
-    return chinese_to_int(match.group(1))
+def _is_extra_marker(chapter: dict[str, Any]) -> bool:
+    combined = " ".join(
+        str(chapter.get(key) or "")
+        for key in ("chapter_title", "chapter_lead", "csv_title")
+    ).lower()
+    return any(marker.lower() in combined for marker in EXTRA_MARKERS)
 
 
-def replace_title_number(title, number):
-    chinese_number = int_to_chinese(number)
-    return re.sub(
-        r"^第\s*[0-9零〇一二两三四五六七八九十百千]+\s*章",
-        f"第{chinese_number}章",
-        str(title or ""),
-        count=1,
-    )
+def _rewrite_title_number(title: str | None, number: int) -> str | None:
+    if not title:
+        return title
+
+    replacement = f"第{int_to_chinese(number)}章"
+    if ARABIC_PREFIX_RE.match(title):
+        return ARABIC_PREFIX_RE.sub(replacement, title, count=1)
+    if CHINESE_PREFIX_RE.match(title):
+        return CHINESE_PREFIX_RE.sub(replacement, title, count=1)
+    return title
 
 
-def replace_lead_number(lead, number):
-    chinese_number = int_to_chinese(number)
-    return re.sub(
-        r"^(【\s*)第\s*[0-9零〇一二两三四五六七八九十百千]+\s*章",
-        rf"\1第{chinese_number}章",
-        str(lead or ""),
-        count=1,
-    )
+def _rewrite_lead_number(lead: str | None, number: int) -> str | None:
+    if not lead:
+        return lead
+
+    replacement = f"【第{int_to_chinese(number)}章"
+    if LEAD_PREFIX_RE.match(lead):
+        return LEAD_PREFIX_RE.sub(replacement, lead, count=1)
+    return lead
 
 
-def load_reference_overrides(reference_file=None):
-    path = Path(reference_file) if reference_file else DEFAULT_REFERENCE_FILE
-    if not path.is_file():
-        return {"reference_name": None, "overrides": []}
+def _review_reason(declared, previous_declared, next_declared, lead_declared):
+    reasons = []
 
-    data = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(data.get("overrides"), list):
-        raise ValueError("Arquivo de referência inválido: 'overrides' deve ser uma lista.")
-    return data
-
-
-def _neighbor_declared_numbers(chapters, index):
-    previous_number = None
-    next_number = None
-
-    for i in range(index - 1, -1, -1):
-        if is_extra(chapters[i]):
-            continue
-        previous_number = extract_declared_number(chapters[i].get("chapter_title"))
-        break
-
-    for i in range(index + 1, len(chapters)):
-        if is_extra(chapters[i]):
-            continue
-        next_number = extract_declared_number(chapters[i].get("chapter_title"))
-        break
-
-    return previous_number, next_number
-
-
-def _apply_reference_overrides(chapters, reference_data):
-    by_url = {
-        item.get("source_url"): item
-        for item in reference_data.get("overrides", [])
-        if item.get("source_url")
-    }
-
-    applied = []
-
-    for chapter in chapters:
-        source_url = chapter.get("source_url")
-        override = by_url.get(source_url)
-        if not override:
-            continue
-
-        chapter["reference_override"] = True
-        chapter["reference_reason"] = override.get("reason")
-        chapter["chapter_type"] = override.get(
-            "chapter_type",
-            chapter.get("chapter_type"),
-        )
-        chapter["story_chapter_number"] = override.get("story_chapter_number")
-
-        corrected_title = override.get("corrected_title")
-        if corrected_title:
-            chapter["chapter_title"] = corrected_title
-
-        if (
-            chapter.get("chapter_type") == "chapter"
-            and chapter.get("story_chapter_number") is not None
-        ):
-            chapter["chapter_lead"] = replace_lead_number(
-                chapter.get("chapter_lead"),
-                chapter["story_chapter_number"],
-            )
-            chapter["numbering_status"] = "reference_confirmed"
-            chapter["numbering_reason"] = "physical_book_reference"
-        else:
-            chapter["numbering_status"] = "reference_confirmed_extra"
-            chapter["numbering_reason"] = "physical_book_reference"
-
-        applied.append({
-            "source_url": source_url,
-            "story_chapter_number": chapter.get("story_chapter_number"),
-            "chapter_type": chapter.get("chapter_type"),
-            "reason": override.get("reason"),
-        })
-
-    # Reorder only when the physical reference explicitly asks for it.
-    for override in reference_data.get("overrides", []):
-        source_url = override.get("source_url")
-        move_after = override.get("move_after_source_url")
-        if not source_url or not move_after:
-            continue
-
-        source_idx = next(
-            (i for i, ch in enumerate(chapters) if ch.get("source_url") == source_url),
-            None,
-        )
-        target_idx = next(
-            (i for i, ch in enumerate(chapters) if ch.get("source_url") == move_after),
-            None,
-        )
-
-        if source_idx is None or target_idx is None:
-            continue
-
-        item = chapters.pop(source_idx)
-
-        # Recalculate target after pop.
-        target_idx = next(
-            i for i, ch in enumerate(chapters)
-            if ch.get("source_url") == move_after
-        )
-        chapters.insert(target_idx + 1, item)
-
-    # Preserve the original physical source position and add the corrected order.
-    for corrected_position, chapter in enumerate(chapters, start=1):
-        chapter["corrected_position"] = corrected_position
-
-    return applied
-
-
-def normalize_book_json(data, reference_file=None):
-    if not isinstance(data, dict):
-        raise ValueError("JSON inválido: esperado objeto na raiz.")
-    if not isinstance(data.get("chapters"), list):
-        raise ValueError("JSON inválido: esperado campo 'chapters' como lista.")
-
-    result = deepcopy(data)
-    chapters = result["chapters"]
-
-    extras = []
-    review = []
-    ok_count = 0
-
-    # First pass: preserve the source exactly and only diagnose.
-    for index, chapter in enumerate(chapters):
-        source_position = index + 1
-        original_title = str(chapter.get("chapter_title") or "")
-        original_lead = str(chapter.get("chapter_lead") or "")
-        declared_number = extract_declared_number(original_title)
-        lead_number = extract_lead_number(original_lead)
-
-        chapter["source_position"] = source_position
-        chapter["source_declared_number"] = declared_number
-        chapter["source_lead_declared_number"] = lead_number
-        chapter["source_chapter_title"] = original_title
-        chapter["source_chapter_lead"] = original_lead
-        chapter["reference_override"] = False
-
-        if is_extra(chapter):
-            chapter["chapter_type"] = "extra"
-            chapter["story_chapter_number"] = None
-            chapter["numbering_status"] = "extra_preserved"
-            chapter["numbering_reason"] = "extra_marker_detected"
-            extras.append({
-                "source_position": source_position,
-                "source_declared_number": declared_number,
-                "source_title": original_title,
-            })
-            continue
-
-        chapter["chapter_type"] = "chapter"
-        chapter["story_chapter_number"] = declared_number
-
-        previous_number, next_number = _neighbor_declared_numbers(chapters, index)
-
-        duplicate_neighbor = (
-            declared_number is not None
-            and declared_number in {previous_number, next_number}
-        )
-        lead_disagrees = (
-            lead_number is not None
-            and declared_number is not None
-            and lead_number != declared_number
-        )
-        suspicious_jump = (
-            previous_number is not None
-            and declared_number is not None
-            and abs(declared_number - previous_number) > 1
-        )
-
-        reasons = []
-        if duplicate_neighbor:
+    if declared is not None:
+        if declared == previous_declared or declared == next_declared:
             reasons.append("duplicate_neighbor")
-        if lead_disagrees:
-            reasons.append("title_lead_disagree")
-        if suspicious_jump:
+
+        neighbors = [
+            number for number in (previous_declared, next_declared)
+            if number is not None
+        ]
+        if neighbors and all(abs(declared - number) > 2 for number in neighbors):
             reasons.append("suspicious_jump")
 
-        if reasons:
-            chapter["numbering_status"] = "review"
-            chapter["numbering_reason"] = ",".join(reasons)
-            review.append({
-                "source_position": source_position,
-                "source_declared_number": declared_number,
-                "source_lead_declared_number": lead_number,
-                "source_title": original_title,
-                "previous_declared_number": previous_number,
-                "next_declared_number": next_number,
-                "reason": chapter["numbering_reason"],
-            })
-        else:
-            chapter["numbering_status"] = "ok"
-            chapter["numbering_reason"] = "source_preserved"
-            ok_count += 1
+    if declared is not None and lead_declared is not None and declared != lead_declared:
+        reasons.append("title_lead_disagree")
 
-    reference_data = load_reference_overrides(reference_file)
-    applied_reference = _apply_reference_overrides(chapters, reference_data)
+    return ",".join(dict.fromkeys(reasons)) or None
 
-    # Remove resolved items from the review summary.
-    resolved_urls = {item["source_url"] for item in applied_reference}
-    review = [
-        item for item in review
-        if chapters[item["source_position"] - 1].get("source_url") not in resolved_urls
+
+def _prepare_source_fields(chapter: dict[str, Any], source_position: int):
+    item = copy.deepcopy(chapter)
+    title = item.get("chapter_title")
+    lead = item.get("chapter_lead")
+
+    item["source_position"] = source_position
+    item["source_declared_number"] = _declared_number(title)
+    item["source_lead_declared_number"] = _lead_declared_number(lead)
+    item["source_chapter_title"] = title
+    item["source_chapter_lead"] = lead
+    item["reference_override"] = False
+
+    return item
+
+
+def _normalize(data: dict[str, Any]) -> dict[str, Any]:
+    reference = _load_reference()
+    physical = reference["physical_book"]
+    reference_map = physical.get("chapter_map", {})
+
+    raw_chapters = data.get("chapters")
+    if not isinstance(raw_chapters, list):
+        raise JsonCorrectionError("JSON inválido: campo 'chapters' ausente.")
+
+    chapters = [
+        _prepare_source_fields(chapter, index)
+        for index, chapter in enumerate(raw_chapters, start=1)
     ]
 
+    reference_applied = []
+    review = []
+
+    max_reference_order = max(
+        (int(entry["editorial_position"]) for entry in reference_map.values()),
+        default=0,
+    )
+
+    for index, item in enumerate(chapters):
+        url = item.get("source_url")
+        declared = item["source_declared_number"]
+        lead_declared = item["source_lead_declared_number"]
+        mapped = reference_map.get(url)
+
+        if mapped is not None:
+            item["chapter_type"] = mapped["chapter_type"]
+            item["story_chapter_number"] = mapped["story_chapter_number"]
+            item["editorial_position"] = int(mapped["editorial_position"])
+            item["_sort_key"] = item["editorial_position"]
+
+            if mapped["chapter_type"] == "extra":
+                item["numbering_status"] = "reference_confirmed_extra"
+                item["numbering_reason"] = mapped["reason"]
+                item["reference_override"] = True
+                reference_applied.append({
+                    "source_url": url,
+                    "story_chapter_number": None,
+                    "chapter_type": "extra",
+                    "reason": mapped["reason"],
+                })
+                continue
+
+            story_number = int(mapped["story_chapter_number"])
+            item["numbering_status"] = "reference_confirmed"
+            item["numbering_reason"] = "physical_book_reference"
+
+            mismatch = declared != story_number
+            lead_mismatch = lead_declared is not None and lead_declared != story_number
+
+            if mismatch or lead_mismatch:
+                item["reference_override"] = True
+                item["chapter_title"] = _rewrite_title_number(
+                    item.get("chapter_title"), story_number
+                )
+                item["chapter_lead"] = _rewrite_lead_number(
+                    item.get("chapter_lead"), story_number
+                )
+                reference_applied.append({
+                    "source_url": url,
+                    "source_declared_number": declared,
+                    "story_chapter_number": story_number,
+                    "chapter_type": "chapter",
+                    "reason": mapped["reason"],
+                })
+            continue
+
+        # Fora da cobertura física, preservar a fonte.
+        if _is_extra_marker(item):
+            item["chapter_type"] = "extra"
+            item["story_chapter_number"] = None
+            item["numbering_status"] = "extra_preserved"
+            item["numbering_reason"] = "extra_marker_detected"
+        else:
+            item["chapter_type"] = "chapter"
+            item["story_chapter_number"] = declared
+            item["numbering_status"] = "ok"
+            item["numbering_reason"] = "source_preserved_outside_reference"
+
+        item["_sort_key"] = max_reference_order + 10000 + item["source_position"]
+
+        previous_declared = (
+            chapters[index - 1]["source_declared_number"] if index > 0 else None
+        )
+        next_declared = (
+            chapters[index + 1]["source_declared_number"]
+            if index + 1 < len(chapters)
+            else None
+        )
+
+        reason = _review_reason(
+            declared, previous_declared, next_declared, lead_declared
+        )
+        if reason and item["chapter_type"] != "extra":
+            item["numbering_status"] = "review"
+            item["numbering_reason"] = reason
+            review.append({
+                "source_position": item["source_position"],
+                "source_declared_number": declared,
+                "source_lead_declared_number": lead_declared,
+                "source_title": item.get("source_chapter_title"),
+                "previous_declared_number": previous_declared,
+                "next_declared_number": next_declared,
+                "reason": reason,
+            })
+
+    # URLs cobertas seguem a ordem editorial confirmada.
+    chapters.sort(key=lambda chapter: chapter["_sort_key"])
+
+    for corrected_position, item in enumerate(chapters, start=1):
+        item["corrected_position"] = corrected_position
+        item.pop("_sort_key", None)
+
+    result = copy.deepcopy(data)
+    result["chapters"] = chapters
     result["chapter_count"] = len(chapters)
+
+    reference_confirmed_count = sum(
+        1 for chapter in chapters
+        if chapter["numbering_status"].startswith("reference_confirmed")
+    )
+    extra_count = sum(
+        1 for chapter in chapters
+        if chapter["chapter_type"] == "extra"
+    )
+    ok_count = sum(
+        1 for chapter in chapters
+        if chapter["numbering_status"] == "ok"
+    )
+
     result["normalization"] = {
-        "version": 3,
-        "strategy": "source_preserved_plus_physical_reference",
+        "version": 5,
+        "strategy": "physical_book_explicit_editorial_position_1_154",
         "source_entry_count": len(chapters),
-        "extra_count": len(extras),
-        "reference_name": reference_data.get("reference_name"),
-        "reference_override_count": len(applied_reference),
-        "reference_overrides_applied": applied_reference,
+        "reference_name": physical["reference_name"],
+        "reference_main_chapters": physical["last_main_chapter"],
+        "reference_confirmed_count": reference_confirmed_count,
+        "reference_override_count": len(reference_applied),
+        "reference_overrides_applied": reference_applied,
+        "extra_count": extra_count,
         "review_count": len(review),
         "ok_count": ok_count,
         "review": review,
@@ -358,23 +344,26 @@ def normalize_book_json(data, reference_file=None):
     return result
 
 
-def correct_json_file(json_path, output_path=None, reference_file=None):
-    json_path = Path(json_path)
-    data = json.loads(json_path.read_text(encoding="utf-8"))
-    corrected = normalize_book_json(data, reference_file=reference_file)
+def correct_json_file(input_path: str | Path) -> dict[str, Any]:
+    input_path = Path(input_path)
+    data = json.loads(input_path.read_text(encoding="utf-8"))
 
-    if output_path is None:
-        output_path = REVIEWED_JSON_DIR / f"{json_path.stem}_ajustado.json"
-    else:
-        output_path = Path(output_path)
+    corrected = _normalize(data)
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(corrected, ensure_ascii=False, indent=2) + "\n",
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    output = OUTPUT_DIR / f"{input_path.stem}_ajustado.json"
+    output.write_text(
+        json.dumps(corrected, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
 
+    normalization = corrected["normalization"]
+
     return {
-        "output": output_path,
-        **corrected["normalization"],
+        "output": output,
+        "source_entry_count": normalization["source_entry_count"],
+        "extra_count": normalization["extra_count"],
+        "reference_override_count": normalization["reference_override_count"],
+        "reference_confirmed_count": normalization["reference_confirmed_count"],
+        "review_count": normalization["review_count"],
     }

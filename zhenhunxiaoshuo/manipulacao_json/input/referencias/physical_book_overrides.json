@@ -1,46 +1,1108 @@
 {
-  "reference_name": "Livro físico - trechos confirmados por foto",
-  "version": 1,
-  "notes": [
-    "Somente trechos confirmados visualmente devem entrar aqui.",
-    "As URLs da fonte continuam preservadas.",
-    "O JSON original nunca é sobrescrito."
-  ],
-  "overrides": [
-    {
-      "source_url": "https://www.zhenhunxiaoshuo.com/11257.html",
-      "chapter_type": "chapter",
-      "story_chapter_number": 151,
-      "corrected_title": "第一百五十一章 魔音",
-      "reason": "Livro físico confirma Capítulo 151 - Som maligno"
-    },
-    {
-      "source_url": "https://www.zhenhunxiaoshuo.com/11258.html",
-      "chapter_type": "chapter",
-      "story_chapter_number": 152,
-      "corrected_title": "第一百五十二章 缘分",
-      "reason": "Livro físico confirma Capítulo 152 - Destino"
-    },
-    {
-      "source_url": "https://www.zhenhunxiaoshuo.com/11260.html",
-      "chapter_type": "chapter",
-      "story_chapter_number": 153,
-      "corrected_title": "第一百五十三章 再度交锋",
-      "reason": "Livro físico confirma Capítulo 153 - Novo confronto"
-    },
-    {
-      "source_url": "https://www.zhenhunxiaoshuo.com/11261.html",
-      "chapter_type": "chapter",
-      "story_chapter_number": 154,
-      "corrected_title": "第一百五十四章 变故",
-      "reason": "Livro físico confirma Capítulo 154 - Reviravolta"
-    },
-    {
-      "source_url": "https://www.zhenhunxiaoshuo.com/11259.html",
-      "chapter_type": "extra",
-      "story_chapter_number": null,
-      "move_after_source_url": "https://www.zhenhunxiaoshuo.com/11261.html",
-      "reason": "Livro físico coloca o Extra de 20 de maio após o Capítulo 154"
+  "version": 5,
+  "physical_book": {
+    "reference_name": "Livro físico - capítulos 1 a 154 fornecidos pelo usuário",
+    "last_main_chapter": 154,
+    "mapping_rule": "source_position preserva a ordem do site; editorial_position é a posição confirmada pela referência física e é a única chave de ordenação editorial.",
+    "chapter_map": {
+      "https://www.zhenhunxiaoshuo.com/11106.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 1,
+        "reference_order": 1,
+        "reason": "Livro físico confirma Capítulo 1.",
+        "editorial_position": 1
+      },
+      "https://www.zhenhunxiaoshuo.com/11107.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 2,
+        "reference_order": 2,
+        "reason": "Livro físico confirma Capítulo 2.",
+        "editorial_position": 2
+      },
+      "https://www.zhenhunxiaoshuo.com/11108.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 3,
+        "reference_order": 3,
+        "reason": "Livro físico confirma Capítulo 3.",
+        "editorial_position": 3
+      },
+      "https://www.zhenhunxiaoshuo.com/11109.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 4,
+        "reference_order": 4,
+        "reason": "Livro físico confirma Capítulo 4.",
+        "editorial_position": 4
+      },
+      "https://www.zhenhunxiaoshuo.com/11110.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 5,
+        "reference_order": 5,
+        "reason": "Livro físico confirma Capítulo 5.",
+        "editorial_position": 5
+      },
+      "https://www.zhenhunxiaoshuo.com/11111.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 6,
+        "reference_order": 6,
+        "reason": "Livro físico confirma Capítulo 6.",
+        "editorial_position": 6
+      },
+      "https://www.zhenhunxiaoshuo.com/11112.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 7,
+        "reference_order": 7,
+        "reason": "Livro físico confirma Capítulo 7.",
+        "editorial_position": 7
+      },
+      "https://www.zhenhunxiaoshuo.com/11113.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 8,
+        "reference_order": 8,
+        "reason": "Livro físico confirma Capítulo 8.",
+        "editorial_position": 8
+      },
+      "https://www.zhenhunxiaoshuo.com/11114.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 9,
+        "reference_order": 9,
+        "reason": "Livro físico confirma Capítulo 9.",
+        "editorial_position": 9
+      },
+      "https://www.zhenhunxiaoshuo.com/11115.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 10,
+        "reference_order": 10,
+        "reason": "Livro físico confirma Capítulo 10.",
+        "editorial_position": 10
+      },
+      "https://www.zhenhunxiaoshuo.com/11116.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 11,
+        "reference_order": 11,
+        "reason": "Livro físico confirma Capítulo 11.",
+        "editorial_position": 11
+      },
+      "https://www.zhenhunxiaoshuo.com/11117.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 12,
+        "reference_order": 12,
+        "reason": "Livro físico confirma Capítulo 12.",
+        "editorial_position": 12
+      },
+      "https://www.zhenhunxiaoshuo.com/11118.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 13,
+        "reference_order": 13,
+        "reason": "Livro físico confirma Capítulo 13.",
+        "editorial_position": 13
+      },
+      "https://www.zhenhunxiaoshuo.com/11119.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 14,
+        "reference_order": 14,
+        "reason": "Livro físico confirma Capítulo 14.",
+        "editorial_position": 14
+      },
+      "https://www.zhenhunxiaoshuo.com/11120.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 15,
+        "reference_order": 15,
+        "reason": "Livro físico confirma Capítulo 15.",
+        "editorial_position": 15
+      },
+      "https://www.zhenhunxiaoshuo.com/11121.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 16,
+        "reference_order": 16,
+        "reason": "Livro físico confirma Capítulo 16.",
+        "editorial_position": 16
+      },
+      "https://www.zhenhunxiaoshuo.com/11122.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 17,
+        "reference_order": 17,
+        "reason": "Livro físico confirma Capítulo 17.",
+        "editorial_position": 17
+      },
+      "https://www.zhenhunxiaoshuo.com/11123.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 18,
+        "reference_order": 18,
+        "reason": "Livro físico confirma Capítulo 18.",
+        "editorial_position": 18
+      },
+      "https://www.zhenhunxiaoshuo.com/11124.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 19,
+        "reference_order": 19,
+        "reason": "Livro físico confirma Capítulo 19.",
+        "editorial_position": 19
+      },
+      "https://www.zhenhunxiaoshuo.com/11125.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 20,
+        "reference_order": 20,
+        "reason": "Livro físico confirma Capítulo 20.",
+        "editorial_position": 20
+      },
+      "https://www.zhenhunxiaoshuo.com/11126.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 21,
+        "reference_order": 21,
+        "reason": "Livro físico confirma Capítulo 21.",
+        "editorial_position": 21
+      },
+      "https://www.zhenhunxiaoshuo.com/11127.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 22,
+        "reference_order": 22,
+        "reason": "Livro físico confirma Capítulo 22.",
+        "editorial_position": 22
+      },
+      "https://www.zhenhunxiaoshuo.com/11128.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 23,
+        "reference_order": 23,
+        "reason": "Livro físico confirma Capítulo 23.",
+        "editorial_position": 23
+      },
+      "https://www.zhenhunxiaoshuo.com/11129.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 24,
+        "reference_order": 24,
+        "reason": "Livro físico confirma Capítulo 24.",
+        "editorial_position": 24
+      },
+      "https://www.zhenhunxiaoshuo.com/11130.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 25,
+        "reference_order": 25,
+        "reason": "Livro físico confirma Capítulo 25.",
+        "editorial_position": 25
+      },
+      "https://www.zhenhunxiaoshuo.com/11131.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 26,
+        "reference_order": 26,
+        "reason": "Livro físico confirma Capítulo 26.",
+        "editorial_position": 26
+      },
+      "https://www.zhenhunxiaoshuo.com/11132.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 27,
+        "reference_order": 27,
+        "reason": "Livro físico confirma Capítulo 27.",
+        "editorial_position": 27
+      },
+      "https://www.zhenhunxiaoshuo.com/11133.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 28,
+        "reference_order": 28,
+        "reason": "Livro físico confirma Capítulo 28.",
+        "editorial_position": 28
+      },
+      "https://www.zhenhunxiaoshuo.com/11134.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 29,
+        "reference_order": 29,
+        "reason": "Livro físico confirma Capítulo 29.",
+        "editorial_position": 29
+      },
+      "https://www.zhenhunxiaoshuo.com/11135.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 30,
+        "reference_order": 30,
+        "reason": "Livro físico confirma Capítulo 30.",
+        "editorial_position": 30
+      },
+      "https://www.zhenhunxiaoshuo.com/11136.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 31,
+        "reference_order": 31,
+        "reason": "Livro físico confirma Capítulo 31.",
+        "editorial_position": 31
+      },
+      "https://www.zhenhunxiaoshuo.com/11137.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 32,
+        "reference_order": 32,
+        "reason": "Livro físico confirma Capítulo 32.",
+        "editorial_position": 32
+      },
+      "https://www.zhenhunxiaoshuo.com/11138.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 33,
+        "reference_order": 33,
+        "reason": "Livro físico confirma Capítulo 33.",
+        "editorial_position": 33
+      },
+      "https://www.zhenhunxiaoshuo.com/11139.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 34,
+        "reference_order": 34,
+        "reason": "Livro físico confirma Capítulo 34.",
+        "editorial_position": 34
+      },
+      "https://www.zhenhunxiaoshuo.com/11140.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 35,
+        "reference_order": 35,
+        "reason": "Livro físico confirma Capítulo 35.",
+        "editorial_position": 35
+      },
+      "https://www.zhenhunxiaoshuo.com/11141.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 36,
+        "reference_order": 36,
+        "reason": "Livro físico confirma Capítulo 36.",
+        "editorial_position": 36
+      },
+      "https://www.zhenhunxiaoshuo.com/11142.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 37,
+        "reference_order": 37,
+        "reason": "Livro físico confirma Capítulo 37.",
+        "editorial_position": 37
+      },
+      "https://www.zhenhunxiaoshuo.com/11143.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 38,
+        "reference_order": 38,
+        "reason": "Livro físico confirma Capítulo 38.",
+        "editorial_position": 38
+      },
+      "https://www.zhenhunxiaoshuo.com/11144.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 39,
+        "reference_order": 39,
+        "reason": "Livro físico confirma Capítulo 39.",
+        "editorial_position": 39
+      },
+      "https://www.zhenhunxiaoshuo.com/11145.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 40,
+        "reference_order": 40,
+        "reason": "Livro físico confirma Capítulo 40.",
+        "editorial_position": 40
+      },
+      "https://www.zhenhunxiaoshuo.com/11146.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 41,
+        "reference_order": 41,
+        "reason": "Livro físico confirma Capítulo 41.",
+        "editorial_position": 41
+      },
+      "https://www.zhenhunxiaoshuo.com/11147.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 42,
+        "reference_order": 42,
+        "reason": "Livro físico confirma Capítulo 42.",
+        "editorial_position": 42
+      },
+      "https://www.zhenhunxiaoshuo.com/11148.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 43,
+        "reference_order": 43,
+        "reason": "Livro físico confirma Capítulo 43.",
+        "editorial_position": 43
+      },
+      "https://www.zhenhunxiaoshuo.com/11149.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 44,
+        "reference_order": 44,
+        "reason": "Livro físico confirma Capítulo 44.",
+        "editorial_position": 44
+      },
+      "https://www.zhenhunxiaoshuo.com/11150.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 45,
+        "reference_order": 45,
+        "reason": "Livro físico confirma Capítulo 45.",
+        "editorial_position": 45
+      },
+      "https://www.zhenhunxiaoshuo.com/11151.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 46,
+        "reference_order": 46,
+        "reason": "Livro físico confirma Capítulo 46.",
+        "editorial_position": 46
+      },
+      "https://www.zhenhunxiaoshuo.com/11152.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 47,
+        "reference_order": 47,
+        "reason": "Livro físico confirma Capítulo 47.",
+        "editorial_position": 47
+      },
+      "https://www.zhenhunxiaoshuo.com/11153.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 48,
+        "reference_order": 48,
+        "reason": "Livro físico confirma Capítulo 48.",
+        "editorial_position": 48
+      },
+      "https://www.zhenhunxiaoshuo.com/11154.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 49,
+        "reference_order": 49,
+        "reason": "Livro físico confirma Capítulo 49.",
+        "editorial_position": 49
+      },
+      "https://www.zhenhunxiaoshuo.com/11155.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 50,
+        "reference_order": 50,
+        "reason": "Livro físico confirma Capítulo 50.",
+        "editorial_position": 50
+      },
+      "https://www.zhenhunxiaoshuo.com/11156.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 51,
+        "reference_order": 51,
+        "reason": "Livro físico confirma Capítulo 51.",
+        "editorial_position": 51
+      },
+      "https://www.zhenhunxiaoshuo.com/11157.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 52,
+        "reference_order": 52,
+        "reason": "Livro físico confirma Capítulo 52.",
+        "editorial_position": 52
+      },
+      "https://www.zhenhunxiaoshuo.com/11158.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 53,
+        "reference_order": 53,
+        "reason": "Livro físico confirma Capítulo 53.",
+        "editorial_position": 53
+      },
+      "https://www.zhenhunxiaoshuo.com/11159.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 54,
+        "reference_order": 54,
+        "reason": "Livro físico confirma Capítulo 54.",
+        "editorial_position": 54
+      },
+      "https://www.zhenhunxiaoshuo.com/11160.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 55,
+        "reference_order": 55,
+        "reason": "Livro físico confirma Capítulo 55.",
+        "editorial_position": 55
+      },
+      "https://www.zhenhunxiaoshuo.com/11161.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 56,
+        "reference_order": 56,
+        "reason": "Livro físico confirma Capítulo 56.",
+        "editorial_position": 56
+      },
+      "https://www.zhenhunxiaoshuo.com/11162.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 57,
+        "reference_order": 57,
+        "reason": "Livro físico confirma Capítulo 57.",
+        "editorial_position": 57
+      },
+      "https://www.zhenhunxiaoshuo.com/11163.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 58,
+        "reference_order": 58,
+        "reason": "Livro físico confirma Capítulo 58.",
+        "editorial_position": 58
+      },
+      "https://www.zhenhunxiaoshuo.com/11164.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 59,
+        "reference_order": 59,
+        "reason": "Livro físico confirma Capítulo 59.",
+        "editorial_position": 59
+      },
+      "https://www.zhenhunxiaoshuo.com/11165.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 60,
+        "reference_order": 60,
+        "reason": "Livro físico confirma Capítulo 60.",
+        "editorial_position": 60
+      },
+      "https://www.zhenhunxiaoshuo.com/11166.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 61,
+        "reference_order": 61,
+        "reason": "Livro físico confirma Capítulo 61.",
+        "editorial_position": 61
+      },
+      "https://www.zhenhunxiaoshuo.com/11167.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 62,
+        "reference_order": 62,
+        "reason": "Livro físico confirma Capítulo 62.",
+        "editorial_position": 62
+      },
+      "https://www.zhenhunxiaoshuo.com/11168.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 63,
+        "reference_order": 63,
+        "reason": "Livro físico confirma Capítulo 63.",
+        "editorial_position": 63
+      },
+      "https://www.zhenhunxiaoshuo.com/11169.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 64,
+        "reference_order": 64,
+        "reason": "Livro físico confirma Capítulo 64.",
+        "editorial_position": 64
+      },
+      "https://www.zhenhunxiaoshuo.com/11170.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 65,
+        "reference_order": 65,
+        "reason": "Livro físico confirma Capítulo 65.",
+        "editorial_position": 65
+      },
+      "https://www.zhenhunxiaoshuo.com/11171.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 66,
+        "reference_order": 66,
+        "reason": "Livro físico confirma Capítulo 66.",
+        "editorial_position": 66
+      },
+      "https://www.zhenhunxiaoshuo.com/11172.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 67,
+        "reference_order": 67,
+        "reason": "Livro físico confirma Capítulo 67.",
+        "editorial_position": 67
+      },
+      "https://www.zhenhunxiaoshuo.com/11173.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 68,
+        "reference_order": 68,
+        "reason": "Livro físico confirma Capítulo 68.",
+        "editorial_position": 68
+      },
+      "https://www.zhenhunxiaoshuo.com/11174.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 69,
+        "reference_order": 69,
+        "reason": "Livro físico confirma Capítulo 69.",
+        "editorial_position": 69
+      },
+      "https://www.zhenhunxiaoshuo.com/11175.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 70,
+        "reference_order": 70,
+        "reason": "Livro físico confirma Capítulo 70.",
+        "editorial_position": 70
+      },
+      "https://www.zhenhunxiaoshuo.com/11176.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 71,
+        "reference_order": 71,
+        "reason": "Livro físico confirma Capítulo 71.",
+        "editorial_position": 71
+      },
+      "https://www.zhenhunxiaoshuo.com/11177.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 72,
+        "reference_order": 72,
+        "reason": "Livro físico confirma Capítulo 72.",
+        "editorial_position": 72
+      },
+      "https://www.zhenhunxiaoshuo.com/11178.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 73,
+        "reference_order": 73,
+        "reason": "Livro físico confirma Capítulo 73.",
+        "editorial_position": 73
+      },
+      "https://www.zhenhunxiaoshuo.com/11179.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 74,
+        "reference_order": 74,
+        "reason": "Livro físico confirma Capítulo 74.",
+        "editorial_position": 74
+      },
+      "https://www.zhenhunxiaoshuo.com/11180.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 75,
+        "reference_order": 75,
+        "reason": "Livro físico confirma Capítulo 75.",
+        "editorial_position": 75
+      },
+      "https://www.zhenhunxiaoshuo.com/11181.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 76,
+        "reference_order": 76,
+        "reason": "Livro físico confirma Capítulo 76.",
+        "editorial_position": 76
+      },
+      "https://www.zhenhunxiaoshuo.com/11182.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 77,
+        "reference_order": 77,
+        "reason": "Livro físico confirma Capítulo 77.",
+        "editorial_position": 77
+      },
+      "https://www.zhenhunxiaoshuo.com/11183.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 78,
+        "reference_order": 78,
+        "reason": "Livro físico confirma Capítulo 78.",
+        "editorial_position": 78
+      },
+      "https://www.zhenhunxiaoshuo.com/11184.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 79,
+        "reference_order": 79,
+        "reason": "Livro físico confirma Capítulo 79.",
+        "editorial_position": 79
+      },
+      "https://www.zhenhunxiaoshuo.com/11185.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 80,
+        "reference_order": 80,
+        "reason": "Livro físico confirma Capítulo 80.",
+        "editorial_position": 80
+      },
+      "https://www.zhenhunxiaoshuo.com/11186.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 81,
+        "reference_order": 81,
+        "reason": "Livro físico confirma Capítulo 81.",
+        "editorial_position": 81
+      },
+      "https://www.zhenhunxiaoshuo.com/11187.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 82,
+        "reference_order": 82,
+        "reason": "Livro físico confirma Capítulo 82.",
+        "editorial_position": 82
+      },
+      "https://www.zhenhunxiaoshuo.com/11188.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 83,
+        "reference_order": 83,
+        "reason": "Livro físico confirma Capítulo 83.",
+        "editorial_position": 83
+      },
+      "https://www.zhenhunxiaoshuo.com/11189.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 84,
+        "reference_order": 84,
+        "reason": "Livro físico confirma Capítulo 84.",
+        "editorial_position": 84
+      },
+      "https://www.zhenhunxiaoshuo.com/11190.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 85,
+        "reference_order": 85,
+        "reason": "Livro físico confirma Capítulo 85.",
+        "editorial_position": 85
+      },
+      "https://www.zhenhunxiaoshuo.com/11191.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 86,
+        "reference_order": 86,
+        "reason": "Livro físico confirma Capítulo 86.",
+        "editorial_position": 86
+      },
+      "https://www.zhenhunxiaoshuo.com/11192.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 87,
+        "reference_order": 87,
+        "reason": "Livro físico confirma Capítulo 87.",
+        "editorial_position": 87
+      },
+      "https://www.zhenhunxiaoshuo.com/11193.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 88,
+        "reference_order": 88,
+        "reason": "Livro físico confirma Capítulo 88.",
+        "editorial_position": 88
+      },
+      "https://www.zhenhunxiaoshuo.com/11194.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 89,
+        "reference_order": 89,
+        "reason": "Livro físico confirma Capítulo 89.",
+        "editorial_position": 89
+      },
+      "https://www.zhenhunxiaoshuo.com/11195.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 90,
+        "reference_order": 90,
+        "reason": "Livro físico confirma Capítulo 90.",
+        "editorial_position": 90
+      },
+      "https://www.zhenhunxiaoshuo.com/11196.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 91,
+        "reference_order": 91,
+        "reason": "Livro físico confirma Capítulo 91.",
+        "editorial_position": 91
+      },
+      "https://www.zhenhunxiaoshuo.com/11197.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 92,
+        "reference_order": 92,
+        "reason": "Livro físico confirma Capítulo 92.",
+        "editorial_position": 92
+      },
+      "https://www.zhenhunxiaoshuo.com/11198.html": {
+        "chapter_type": "extra",
+        "story_chapter_number": null,
+        "reference_order": 93,
+        "label": "Capítulo Extra de Ano-Novo",
+        "after_story_chapter": 92,
+        "reason": "Livro físico registra o especial de Ano-Novo fora da numeração principal.",
+        "editorial_after": 92,
+        "editorial_position": 93
+      },
+      "https://www.zhenhunxiaoshuo.com/11199.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 93,
+        "reference_order": 94,
+        "reason": "Livro físico confirma Capítulo 93.",
+        "editorial_position": 94
+      },
+      "https://www.zhenhunxiaoshuo.com/11200.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 94,
+        "reference_order": 95,
+        "reason": "Livro físico confirma Capítulo 94.",
+        "editorial_position": 95
+      },
+      "https://www.zhenhunxiaoshuo.com/11201.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 95,
+        "reference_order": 96,
+        "reason": "Livro físico confirma Capítulo 95.",
+        "editorial_position": 96
+      },
+      "https://www.zhenhunxiaoshuo.com/11202.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 96,
+        "reference_order": 97,
+        "reason": "Livro físico confirma Capítulo 96.",
+        "editorial_position": 97
+      },
+      "https://www.zhenhunxiaoshuo.com/11203.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 97,
+        "reference_order": 98,
+        "reason": "Livro físico confirma Capítulo 97.",
+        "editorial_position": 98
+      },
+      "https://www.zhenhunxiaoshuo.com/11204.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 98,
+        "reference_order": 99,
+        "reason": "Livro físico confirma Capítulo 98.",
+        "editorial_position": 99
+      },
+      "https://www.zhenhunxiaoshuo.com/11205.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 99,
+        "reference_order": 100,
+        "reason": "Livro físico confirma Capítulo 99.",
+        "editorial_position": 100
+      },
+      "https://www.zhenhunxiaoshuo.com/11206.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 100,
+        "reference_order": 101,
+        "reason": "Livro físico confirma Capítulo 100.",
+        "editorial_position": 101
+      },
+      "https://www.zhenhunxiaoshuo.com/11207.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 101,
+        "reference_order": 102,
+        "reason": "Livro físico confirma Capítulo 101.",
+        "editorial_position": 102
+      },
+      "https://www.zhenhunxiaoshuo.com/11208.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 102,
+        "reference_order": 103,
+        "reason": "Livro físico confirma Capítulo 102.",
+        "editorial_position": 103
+      },
+      "https://www.zhenhunxiaoshuo.com/11209.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 103,
+        "reference_order": 104,
+        "reason": "Livro físico confirma Capítulo 103.",
+        "editorial_position": 104
+      },
+      "https://www.zhenhunxiaoshuo.com/11210.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 104,
+        "reference_order": 105,
+        "reason": "Livro físico confirma Capítulo 104.",
+        "editorial_position": 105
+      },
+      "https://www.zhenhunxiaoshuo.com/11211.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 105,
+        "reference_order": 106,
+        "reason": "Livro físico confirma Capítulo 105.",
+        "editorial_position": 106
+      },
+      "https://www.zhenhunxiaoshuo.com/11212.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 106,
+        "reference_order": 107,
+        "reason": "Livro físico confirma Capítulo 106.",
+        "editorial_position": 107
+      },
+      "https://www.zhenhunxiaoshuo.com/11213.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 107,
+        "reference_order": 108,
+        "reason": "Livro físico confirma Capítulo 107.",
+        "editorial_position": 108
+      },
+      "https://www.zhenhunxiaoshuo.com/11214.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 108,
+        "reference_order": 109,
+        "reason": "Livro físico confirma Capítulo 108.",
+        "editorial_position": 109
+      },
+      "https://www.zhenhunxiaoshuo.com/11215.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 109,
+        "reference_order": 110,
+        "reason": "Livro físico confirma Capítulo 109.",
+        "editorial_position": 110
+      },
+      "https://www.zhenhunxiaoshuo.com/11216.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 110,
+        "reference_order": 111,
+        "reason": "Livro físico confirma Capítulo 110.",
+        "editorial_position": 111
+      },
+      "https://www.zhenhunxiaoshuo.com/11217.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 111,
+        "reference_order": 112,
+        "reason": "Livro físico confirma Capítulo 111.",
+        "editorial_position": 112
+      },
+      "https://www.zhenhunxiaoshuo.com/11218.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 112,
+        "reference_order": 113,
+        "reason": "Livro físico confirma Capítulo 112.",
+        "editorial_position": 113
+      },
+      "https://www.zhenhunxiaoshuo.com/11219.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 113,
+        "reference_order": 114,
+        "reason": "Livro físico confirma Capítulo 113.",
+        "editorial_position": 114
+      },
+      "https://www.zhenhunxiaoshuo.com/11220.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 114,
+        "reference_order": 115,
+        "reason": "Livro físico confirma Capítulo 114.",
+        "editorial_position": 115
+      },
+      "https://www.zhenhunxiaoshuo.com/11221.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 115,
+        "reference_order": 116,
+        "reason": "Livro físico confirma Capítulo 115.",
+        "editorial_position": 116
+      },
+      "https://www.zhenhunxiaoshuo.com/11222.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 116,
+        "reference_order": 117,
+        "reason": "Livro físico confirma Capítulo 116.",
+        "editorial_position": 117
+      },
+      "https://www.zhenhunxiaoshuo.com/11223.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 117,
+        "reference_order": 118,
+        "reason": "Livro físico confirma Capítulo 117.",
+        "editorial_position": 118
+      },
+      "https://www.zhenhunxiaoshuo.com/11224.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 118,
+        "reference_order": 119,
+        "reason": "Livro físico confirma Capítulo 118.",
+        "editorial_position": 119
+      },
+      "https://www.zhenhunxiaoshuo.com/11225.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 119,
+        "reference_order": 120,
+        "reason": "Livro físico confirma Capítulo 119.",
+        "editorial_position": 120
+      },
+      "https://www.zhenhunxiaoshuo.com/11226.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 120,
+        "reference_order": 121,
+        "reason": "Livro físico confirma Capítulo 120.",
+        "editorial_position": 121
+      },
+      "https://www.zhenhunxiaoshuo.com/11227.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 121,
+        "reference_order": 122,
+        "reason": "Livro físico confirma Capítulo 121.",
+        "editorial_position": 122
+      },
+      "https://www.zhenhunxiaoshuo.com/11228.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 122,
+        "reference_order": 123,
+        "reason": "Livro físico confirma Capítulo 122.",
+        "editorial_position": 123
+      },
+      "https://www.zhenhunxiaoshuo.com/11229.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 123,
+        "reference_order": 124,
+        "reason": "Livro físico confirma Capítulo 123.",
+        "editorial_position": 124
+      },
+      "https://www.zhenhunxiaoshuo.com/11230.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 124,
+        "reference_order": 125,
+        "reason": "Livro físico confirma Capítulo 124.",
+        "editorial_position": 125
+      },
+      "https://www.zhenhunxiaoshuo.com/11231.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 125,
+        "reference_order": 126,
+        "reason": "Livro físico confirma Capítulo 125.",
+        "editorial_position": 126
+      },
+      "https://www.zhenhunxiaoshuo.com/11232.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 126,
+        "reference_order": 127,
+        "reason": "Livro físico confirma Capítulo 126.",
+        "editorial_position": 127
+      },
+      "https://www.zhenhunxiaoshuo.com/11233.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 127,
+        "reference_order": 128,
+        "reason": "Livro físico confirma Capítulo 127.",
+        "editorial_position": 128
+      },
+      "https://www.zhenhunxiaoshuo.com/11234.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 128,
+        "reference_order": 129,
+        "reason": "Livro físico confirma Capítulo 128.",
+        "editorial_position": 129
+      },
+      "https://www.zhenhunxiaoshuo.com/11235.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 129,
+        "reference_order": 130,
+        "reason": "Livro físico confirma Capítulo 129.",
+        "editorial_position": 130
+      },
+      "https://www.zhenhunxiaoshuo.com/11236.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 130,
+        "reference_order": 131,
+        "reason": "Livro físico confirma Capítulo 130.",
+        "editorial_position": 131
+      },
+      "https://www.zhenhunxiaoshuo.com/11237.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 131,
+        "reference_order": 132,
+        "reason": "Livro físico confirma Capítulo 131.",
+        "editorial_position": 132
+      },
+      "https://www.zhenhunxiaoshuo.com/11238.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 132,
+        "reference_order": 133,
+        "reason": "Livro físico confirma Capítulo 132.",
+        "editorial_position": 133
+      },
+      "https://www.zhenhunxiaoshuo.com/11239.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 133,
+        "reference_order": 134,
+        "reason": "Livro físico confirma Capítulo 133.",
+        "editorial_position": 134
+      },
+      "https://www.zhenhunxiaoshuo.com/11240.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 134,
+        "reference_order": 135,
+        "reason": "Livro físico confirma Capítulo 134.",
+        "editorial_position": 135
+      },
+      "https://www.zhenhunxiaoshuo.com/11241.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 135,
+        "reference_order": 136,
+        "reason": "Livro físico confirma Capítulo 135.",
+        "editorial_position": 136
+      },
+      "https://www.zhenhunxiaoshuo.com/11242.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 136,
+        "reference_order": 137,
+        "reason": "Livro físico confirma Capítulo 136.",
+        "editorial_position": 137
+      },
+      "https://www.zhenhunxiaoshuo.com/11243.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 137,
+        "reference_order": 138,
+        "reason": "Livro físico confirma Capítulo 137.",
+        "editorial_position": 138
+      },
+      "https://www.zhenhunxiaoshuo.com/11244.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 138,
+        "reference_order": 139,
+        "reason": "Livro físico confirma Capítulo 138.",
+        "editorial_position": 139
+      },
+      "https://www.zhenhunxiaoshuo.com/11245.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 139,
+        "reference_order": 140,
+        "reason": "Livro físico confirma Capítulo 139.",
+        "editorial_position": 140
+      },
+      "https://www.zhenhunxiaoshuo.com/11246.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 140,
+        "reference_order": 141,
+        "reason": "Livro físico confirma Capítulo 140.",
+        "editorial_position": 141
+      },
+      "https://www.zhenhunxiaoshuo.com/11247.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 141,
+        "reference_order": 142,
+        "reason": "Livro físico confirma Capítulo 141.",
+        "editorial_position": 142
+      },
+      "https://www.zhenhunxiaoshuo.com/11248.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 142,
+        "reference_order": 143,
+        "reason": "Livro físico confirma Capítulo 142.",
+        "editorial_position": 143
+      },
+      "https://www.zhenhunxiaoshuo.com/11249.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 143,
+        "reference_order": 144,
+        "reason": "Livro físico confirma Capítulo 143.",
+        "editorial_position": 144
+      },
+      "https://www.zhenhunxiaoshuo.com/11250.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 144,
+        "reference_order": 145,
+        "reason": "Livro físico confirma Capítulo 144.",
+        "editorial_position": 145
+      },
+      "https://www.zhenhunxiaoshuo.com/11251.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 145,
+        "reference_order": 146,
+        "reason": "Livro físico confirma Capítulo 145.",
+        "editorial_position": 146
+      },
+      "https://www.zhenhunxiaoshuo.com/11252.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 146,
+        "reference_order": 147,
+        "reason": "Livro físico confirma Capítulo 146.",
+        "editorial_position": 147
+      },
+      "https://www.zhenhunxiaoshuo.com/11253.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 147,
+        "reference_order": 148,
+        "reason": "Livro físico confirma Capítulo 147.",
+        "editorial_position": 148
+      },
+      "https://www.zhenhunxiaoshuo.com/11254.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 148,
+        "reference_order": 149,
+        "reason": "Livro físico confirma Capítulo 148.",
+        "editorial_position": 149
+      },
+      "https://www.zhenhunxiaoshuo.com/11255.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 149,
+        "reference_order": 150,
+        "reason": "Livro físico confirma Capítulo 149.",
+        "editorial_position": 150
+      },
+      "https://www.zhenhunxiaoshuo.com/11256.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 150,
+        "reference_order": 151,
+        "reason": "Livro físico confirma Capítulo 150.",
+        "editorial_position": 151
+      },
+      "https://www.zhenhunxiaoshuo.com/11257.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 151,
+        "reference_order": 152,
+        "reason": "Livro físico confirma Capítulo 151.",
+        "editorial_position": 152
+      },
+      "https://www.zhenhunxiaoshuo.com/11258.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 152,
+        "reference_order": 153,
+        "reason": "Livro físico confirma Capítulo 152.",
+        "editorial_position": 153
+      },
+      "https://www.zhenhunxiaoshuo.com/11259.html": {
+        "chapter_type": "extra",
+        "story_chapter_number": null,
+        "reference_order": 156,
+        "label": "Capítulo Extra de 20 de maio",
+        "after_story_chapter": 154,
+        "reason": "Livro físico coloca o Extra de 20 de maio após o Capítulo 154.",
+        "editorial_after": 154,
+        "editorial_position": 156
+      },
+      "https://www.zhenhunxiaoshuo.com/11260.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 153,
+        "reference_order": 154,
+        "reason": "Livro físico confirma Capítulo 153.",
+        "editorial_position": 154
+      },
+      "https://www.zhenhunxiaoshuo.com/11261.html": {
+        "chapter_type": "chapter",
+        "story_chapter_number": 154,
+        "reference_order": 155,
+        "reason": "Livro físico confirma Capítulo 154.",
+        "editorial_position": 155
+      }
     }
-  ]
+  }
 }
