@@ -9,10 +9,10 @@ from zhenhunxiaoshuo.identity_contract import (
 
 MODULE_ROOT = Path(__file__).resolve().parents[1]
 # Compatibilidade com menu.py atual.
-ORIGINAL_EPUB_DIR = MODULE_ROOT / "output" / "gerados" / "sem_redundancia"
+ORIGINAL_EPUB_DIR = MODULE_ROOT / "output" / "3_geracao"
 TRANSLATED_EPUB_DIR = MODULE_ROOT / "input" / "traduzidos"
 TITLE_CSV_DIR = MODULE_ROOT / "input" / "capitulos"
-CORRECTED_EPUB_DIR = MODULE_ROOT / "output" / "pos_traducao"
+CORRECTED_EPUB_DIR = MODULE_ROOT / "output" / "4_pos_trad"
 
 
 class StructuralMatchError(ValueError):

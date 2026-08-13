@@ -67,7 +67,7 @@ EPUB traduzido corrigido
 A opção **4. Pós-Trad** exige três entradas:
 
 ```text
-producao_epub/output/gerados/sem_redundancia/*.epub
+producao_epub/output/3_geracao/*.epub
 producao_epub/input/traduzidos/*.epub
 producao_epub/input/capitulos/comparacao_capitulos.csv
 ```
@@ -143,7 +143,7 @@ Na pós-tradução, o EPUB traduzido também não é sobrescrito. O resultado é
 em:
 
 ```text
-zhenhunxiaoshuo/producao_epub/output/pos_traducao/
+zhenhunxiaoshuo/producao_epub/output/4_pos_trad/
 ```
 
 > Importante: o EPUB traduzido deve ter sido gerado a partir do JSON ajustado.

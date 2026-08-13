@@ -14,8 +14,7 @@ class EpubCoverIntegrationTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name)
         (self.root / "producao_epub/input/capas").mkdir(parents=True)
-        (self.root / "producao_epub/output/gerados/padrao").mkdir(parents=True)
-        (self.root / "producao_epub/output/gerados/sem_redundancia").mkdir(parents=True)
+        (self.root / "producao_epub/output/3_geracao").mkdir(parents=True)
         self.cover_path = self.root / "producao_epub/input/capas/cover.jpg"
         self.cover_path.write_bytes(b"\xff\xd8\xff\xe0fake-jpeg-for-test\xff\xd9")
         self.config = {
@@ -26,8 +25,6 @@ class EpubCoverIntegrationTests(unittest.TestCase):
                 "language": "zh-CN",
             },
             "cover_path": "producao_epub/input/capas/cover.jpg",
-            "epub_output_dir": "producao_epub/output/gerados/padrao",
-            "epub_no_redundancy_output_dir": "producao_epub/output/gerados/sem_redundancia",
         }
         (self.root / "config_zhenhunxiaoshuo.json").write_text(
             json.dumps(self.config, ensure_ascii=False), encoding="utf-8"
@@ -126,13 +123,15 @@ class EpubCoverIntegrationTests(unittest.TestCase):
         with patch.object(epub_builder, "PROJECT_ROOT", self.root):
             self.assertEqual(self.cover_path, epub_builder.find_cover(self.config))
 
-    def test_missing_required_cover_fails_before_epub_is_created(self):
+    def test_missing_cover_builds_epub_without_cover_assets(self):
         self.cover_path.unlink()
-        output = self.root / "missing-cover.epub"
         with patch.object(epub_builder, "PROJECT_ROOT", self.root):
-            with self.assertRaisesRegex(FileNotFoundError, "Capa obrigatória não encontrada"):
-                epub_builder.build_epub(self.json_path, output_path=output)
-        self.assertFalse(output.exists())
+            output = epub_builder.build_epub(self.json_path)
+
+        with zipfile.ZipFile(output) as epub:
+            names = set(epub.namelist())
+            self.assertNotIn("OEBPS/Images/cover.jpg", names)
+            self.assertNotIn("OEBPS/cover.xhtml", names)
 
 
 if __name__ == "__main__":

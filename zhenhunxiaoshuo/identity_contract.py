@@ -619,9 +619,10 @@ def correct_epub_titles_by_identity(
                     ncx_updated = True
 
     root = Path(__file__).resolve().parent
-    output_dir = root / "producao_epub" / "output" / "pos_traducao"
+    output_dir = root / "producao_epub" / "output" / "4_pos_trad"
     output_dir.mkdir(parents=True, exist_ok=True)
-    output = output_dir / f"{translated_epub.stem}_titulos_corrigidos.epub"
+    base_name = re.sub(r"_titulos_corrigidos$|_final$", "", translated_epub.stem, flags=re.I)
+    output = output_dir / f"{base_name}_final.epub"
     shutil.copy2(translated_epub, output)
     _rewrite_zip(output, replacements)
 

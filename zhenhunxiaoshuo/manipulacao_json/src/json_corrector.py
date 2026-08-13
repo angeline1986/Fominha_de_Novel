@@ -10,7 +10,7 @@ from zhenhunxiaoshuo.identity_contract import apply_identity_to_adjusted_json
 
 MODULE_ROOT = Path(__file__).resolve().parents[1]
 REFERENCE_FILE = MODULE_ROOT / "input" / "referencias" / "physical_book_overrides.json"
-OUTPUT_DIR = MODULE_ROOT / "output" / "revisados"
+OUTPUT_DIR = MODULE_ROOT / "output" / "2_revisao"
 # Compatibilidade com o menu atual, que importa este nome público.
 REVIEWED_JSON_DIR = OUTPUT_DIR
 

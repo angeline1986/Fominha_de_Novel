@@ -265,17 +265,9 @@ def _content_opf(book_title, author, language, uid, chapters, cover_info=None):
 
 def _output_path(config, mode):
     book_id = _book_value(config["book"], "id", "book")
-    filename = (
-        f"{book_id}.epub"
-        if mode == MODE_STANDARD
-        else f"{book_id}_sem_redundancia.epub"
-    )
-    output_key = (
-        "epub_output_dir"
-        if mode == MODE_STANDARD
-        else "epub_no_redundancy_output_dir"
-    )
-    return PROJECT_ROOT / config[output_key] / filename
+    suffix = "bruto" if mode == MODE_STANDARD else "polido"
+    output_dir = PROJECT_ROOT / "producao_epub" / "output" / "3_geracao"
+    return output_dir / f"{book_id}_{suffix}.epub"
 
 
 def build_epub(json_path, output_path=None, mode=MODE_STANDARD):
