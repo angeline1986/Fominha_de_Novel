@@ -3,7 +3,10 @@ import os
 import sys
 from pathlib import Path
 
-from .manipulacao_json.src.json_corrector import correct_json_file
+from .manipulacao_json.src.json_corrector import (
+    REVIEWED_JSON_DIR,
+    correct_json_file,
+)
 from .manipulacao_json.src.scraper import run as run_scraper
 from .producao_epub.src.epub_builder import (
     MODE_NO_REDUNDANCY,
@@ -12,9 +15,10 @@ from .producao_epub.src.epub_builder import (
     find_cover,
 )
 from .producao_epub.src.title_corrector import (
-    JSON_DIR,
+    ORIGINAL_EPUB_DIR,
     TITLE_CSV_DIR,
     TRANSLATED_EPUB_DIR,
+    StructuralMatchError,
     correct_epub_titles,
 )
 
@@ -146,13 +150,13 @@ def json_files():
 
 
 def adjusted_json_files():
-    JSON_DIR.mkdir(parents=True, exist_ok=True)
+    REVIEWED_JSON_DIR.mkdir(parents=True, exist_ok=True)
 
-    files = sorted(JSON_DIR.glob("*_ajustado.json"))
+    files = sorted(REVIEWED_JSON_DIR.glob("*_ajustado.json"))
 
     if not files:
         # Compatibilidade temporária com versões anteriores do corretor.
-        files = sorted(JSON_DIR.glob("*_corrigido.json"))
+        files = sorted(REVIEWED_JSON_DIR.glob("*_corrigido.json"))
 
     return files
 
@@ -305,14 +309,22 @@ def menu_correct_translated_titles():
     print()
     print(green(bold("  [🟢 PÓS-TRADUÇÃO]")))
 
+    ORIGINAL_EPUB_DIR.mkdir(parents=True, exist_ok=True)
     TRANSLATED_EPUB_DIR.mkdir(parents=True, exist_ok=True)
     TITLE_CSV_DIR.mkdir(parents=True, exist_ok=True)
 
-    epub = select_file(
+    original_epub = select_file(
+        sorted(ORIGINAL_EPUB_DIR.glob("*.epub")),
+        "EPUBs originais disponíveis",
+    )
+    if original_epub is None:
+        return
+
+    translated_epub = select_file(
         sorted(TRANSLATED_EPUB_DIR.glob("*.epub")),
         "EPUBs traduzidos disponíveis",
     )
-    if epub is None:
+    if translated_epub is None:
         return
 
     csv_file = select_file(
@@ -322,24 +334,13 @@ def menu_correct_translated_titles():
     if csv_file is None:
         return
 
-    adjusted_json = select_file(
-        adjusted_json_files(),
-        "JSONs ajustados disponíveis",
-    )
-    if adjusted_json is None:
-        print(
-            f"\n{yellow('AVISO:')} gere primeiro um JSON ajustado "
-            "pela opção 2."
-        )
-        return
-
     print()
-    print(f"  {bold('EPUB:')} {epub.name}")
+    print(f"  {bold('EPUB original:')} {original_epub.name}")
+    print(f"  {bold('EPUB traduzido:')} {translated_epub.name}")
     print(f"  {bold('CSV:')} {csv_file.name}")
-    print(f"  {bold('JSON estrutural:')} {adjusted_json.name}")
 
     print()
-    print(f"  {green(1)}. Aplicar correção estrutural")
+    print(f"  {green(1)}. Validar estrutura e corrigir títulos")
     print(f"  {green(0)}. Voltar")
 
     choice = ask_number(
@@ -349,20 +350,25 @@ def menu_correct_translated_titles():
     if choice == 0:
         return
 
-    result = correct_epub_titles(
-        epub,
-        csv_file,
-        adjusted_json,
-    )
+    try:
+        result = correct_epub_titles(
+            original_epub,
+            translated_epub,
+            csv_file,
+        )
+    except StructuralMatchError as error:
+        print(f"\n{red(str(error))}")
+        return
 
     print()
     print(green(bold("  Correção concluída")))
     print(f"  Separador CSV: {repr(result['delimiter'])}")
+    print(f"  Capítulos validados: {result['chapter_count']}")
     print(f"  Entradas estruturais: {result['mapped_entries']}")
     print(f"  Títulos alterados: {result['corrected_count']}")
     print(
-        f"  Spine reorganizado: "
-        f"{'sim' if result['spine_updated'] else 'não'}"
+        f"  Spine preservado: "
+        f"{'sim' if result['spine_preserved'] else 'não'}"
     )
     print(
         f"  nav.xhtml atualizado: "

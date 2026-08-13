@@ -55,9 +55,9 @@ JSON ajustado
 Tradução / Calibre
         ↓
 4. Pós-Trad
+        ├── EPUB original sem redundância
         ├── EPUB traduzido
-        ├── CSV de títulos
-        └── JSON ajustado
+        └── CSV de comparação
         ↓
 EPUB traduzido corrigido
 ```
@@ -67,40 +67,42 @@ EPUB traduzido corrigido
 A opção **4. Pós-Trad** exige três entradas:
 
 ```text
+producao_epub/output/gerados/sem_redundancia/*.epub
 producao_epub/input/traduzidos/*.epub
 producao_epub/input/capitulos/comparacao_capitulos.csv
-manipulacao_json/output/revisados/*_ajustado.json
 ```
 
 O CSV pode usar `;` ou `,`; o separador é detectado automaticamente.
 
-O JSON ajustado é obrigatório porque a correspondência correta não pode ser
-feita apenas por número de capítulo. A obra possui extras, duplicidades e
-numerações inconsistentes na fonte.
+O JSON ajustado não participa da Pós-Trad. Ele continua sendo usado na etapa
+anterior, para gerar o EPUB original. Depois da tradução externa, a
+correspondência física é validada comparando o EPUB original com o EPUB
+traduzido.
 
 O corretor usa:
 
 ```text
-corrected_position
-    → identifica qual XHTML contém aquele conteúdo no EPUB traduzido
+EPUB original
+    → referência estrutural física dos XHTMLs e do spine
 
-story_chapter_number
-    → identifica qual título editorial do CSV pertence ao capítulo
+EPUB traduzido
+    → conteúdo traduzido a preservar
 
-source_position
-    → preserva a posição original do site para auditoria
+CSV de comparação
+    → referência editorial para os títulos
 ```
 
-Isso permite, por exemplo, que o capítulo narrativo 154 esteja fisicamente em
-`chapter_155.xhtml`, enquanto o Extra de 20 de maio ocupa `chapter_156.xhtml`,
-sem que o título editorial seja aplicado ao conteúdo errado.
+Se os EPUBs não tiverem correspondência estrutural 1:1, a correção é abortada
+sem gerar EPUB parcial.
 
 A correção atualiza:
 
 - `<h1>` e `<title>` dos XHTMLs quando há título editorial no CSV;
-- `spine` do OPF;
 - `nav.xhtml`;
 - `toc.ncx`.
+
+O spine é validado e preservado; a Pós-Trad não move capítulos nem renumera
+arquivos.
 
 Quando `Título no DOCX` está vazio, o título traduzido existente é preservado.
 Isso é importante para capítulos que ainda não possuem título editorial de
