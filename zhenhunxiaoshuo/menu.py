@@ -1,9 +1,18 @@
 import json
+import os
+import sys
 from pathlib import Path
 
-from .epub_builder import MODE_NO_REDUNDANCY, MODE_STANDARD, build_epub, find_cover
-from .scraper import run as run_scraper
-from .title_corrector import (
+from .manipulacao_json.src.json_corrector import correct_json_file
+from .manipulacao_json.src.scraper import run as run_scraper
+from .producao_epub.src.epub_builder import (
+    MODE_NO_REDUNDANCY,
+    MODE_STANDARD,
+    build_epub,
+    find_cover,
+)
+from .producao_epub.src.title_corrector import (
+    JSON_DIR,
     TITLE_CSV_DIR,
     TRANSLATED_EPUB_DIR,
     correct_epub_titles,
@@ -12,9 +21,52 @@ from .title_corrector import (
 ROOT = Path(__file__).resolve().parent
 
 
+def _supports_color():
+    if os.environ.get("NO_COLOR") is not None:
+        return False
+    if not sys.stdout.isatty():
+        return False
+    return os.environ.get("TERM", "") != "dumb"
+
+
+USE_COLOR = _supports_color()
+
+
+def color(text, code):
+    if not USE_COLOR:
+        return str(text)
+    return f"\033[{code}m{text}\033[0m"
+
+
+def bold(text):
+    return color(text, "1")
+
+
+def yellow(text):
+    return color(text, "1;33")
+
+
+def green(text):
+    return color(text, "1;32")
+
+
+def cyan(text):
+    return color(text, "1;36")
+
+
+def red(text):
+    return color(text, "1;31")
+
+
+def gray(text):
+    return color(text, "90")
+
+
 def load_config():
     return json.loads(
-        (ROOT / "config_zhenhunxiaoshuo.json").read_text(encoding="utf-8")
+        (ROOT / "config_zhenhunxiaoshuo.json").read_text(
+            encoding="utf-8"
+        )
     )
 
 
@@ -28,10 +80,7 @@ def display_path(path):
         index = path.parts.index("Fominha_de_Novel")
         return str(Path(*path.parts[index:]))
     except ValueError:
-        try:
-            return str(path.relative_to(ROOT.parent.parent))
-        except ValueError:
-            return str(path)
+        return str(path)
 
 
 def ask_number(prompt, valid_values):
@@ -43,110 +92,218 @@ def ask_number(prompt, valid_values):
             if value in valid_values:
                 return value
 
-        print("Opção inválida. Digite uma das opções numeradas.")
+        print(red("Opção inválida. Escolha uma opção numerada."))
 
 
-def menu_json():
-    while True:
-        print("\n=== Gerar JSON ===")
-        print("1. Todos os capítulos")
-        print("2. Informar quantidade")
-        print("0. Voltar")
-
-        option = ask_number("\nEscolha uma opção: ", {0, 1, 2})
-
-        if option == 0:
-            return
-
-        if option == 1:
-            output = run_scraper()
-            print(f"\nJSON: {display_path(output)}")
-            return
-
-        while True:
-            raw = input("Quantos capítulos deseja gerar? ").strip()
-
-            if raw.isdigit() and int(raw) > 0:
-                output = run_scraper(limit=int(raw))
-                print(f"\nJSON: {display_path(output)}")
-                return
-
-            print("Quantidade inválida. Informe um número inteiro maior que zero.")
+def option(number, icon, name, description=""):
+    prefix = f"  {green(number)}. {icon} "
+    if description:
+        print(
+            f"{prefix}{bold(name):<22} {description}"
+        )
+    else:
+        print(f"{prefix}{name}")
 
 
-def json_files():
-    config = load_config()
-    json_dir = ROOT / config["output_dir"] / "json"
-    json_dir.mkdir(parents=True, exist_ok=True)
-    return sorted(json_dir.glob("*.json"))
+def separator():
+    print(gray("  " + "─" * 50))
+
+
+def main_header():
+    print()
+    print(cyan(bold("  ZHENHUNXIAOSHUO")))
+    separator()
 
 
 def select_file(files, heading):
     files = list(files)
 
     if not files:
-        print(f"\nNenhum arquivo encontrado em {heading}.")
+        print(f"\n{yellow('AVISO:')} nenhum arquivo encontrado.")
         return None
 
-    print(f"\n{heading}:")
+    print(f"\n{bold(heading)}:")
     for index, path in enumerate(files, start=1):
-        print(f"{index}. {path.name}")
-    print("0. Voltar")
+        print(f"  {green(index)}. {path.name}")
+    print(f"  {green(0)}. Voltar")
 
-    option = ask_number(
-        "\nEscolha uma opção: ",
+    value = ask_number(
+        "\nSelecione uma opção › ",
         set(range(0, len(files) + 1)),
     )
 
-    if option == 0:
+    if value == 0:
         return None
 
-    return files[option - 1]
+    return files[value - 1]
 
 
-def select_json():
-    return select_file(json_files(), "JSONs disponíveis")
+def json_files():
+    config = load_config()
+    directory = ROOT / config["output_dir"]
+    directory.mkdir(parents=True, exist_ok=True)
+    return sorted(directory.glob("*.json"))
+
+
+def adjusted_json_files():
+    JSON_DIR.mkdir(parents=True, exist_ok=True)
+
+    files = sorted(JSON_DIR.glob("*_ajustado.json"))
+
+    if not files:
+        # Compatibilidade temporária com versões anteriores do corretor.
+        files = sorted(JSON_DIR.glob("*_corrigido.json"))
+
+    return files
+
+
+def menu_json():
+    print()
+    print(yellow(bold("  [🟡 EXTRAÇÃO DE JSON]")))
+    print(f"  {green(1)}. Todos os capítulos")
+    print(f"  {green(2)}. Informar quantidade")
+    print(f"  {green(0)}. Voltar")
+
+    choice = ask_number(
+        "\nSelecione uma opção › ",
+        {0, 1, 2},
+    )
+
+    if choice == 0:
+        return
+
+    if choice == 1:
+        output = run_scraper()
+        print(f"\n{green('OK:')} {display_path(output)}")
+        return
+
+    while True:
+        raw = input("Quantos capítulos deseja gerar? ").strip()
+
+        if raw.isdigit() and int(raw) > 0:
+            output = run_scraper(limit=int(raw))
+            print(f"\n{green('OK:')} {display_path(output)}")
+            return
+
+        print(red("Informe um número inteiro maior que zero."))
 
 
 def generate_epub(mode):
-    config = load_config()
-    selected = select_json()
-
+    selected = select_file(
+        adjusted_json_files(),
+        "JSONs revisados disponíveis",
+    )
     if selected is None:
         return
 
+    config = load_config()
     data = json.loads(selected.read_text(encoding="utf-8"))
     book = config["book"]
-    chapter_count = len(data.get("chapters") or [])
     cover = find_cover(config)
 
-    label = "Gerar EPUB" if mode == MODE_STANDARD else "Gerar EPUB sem redundância"
+    print()
+    print(f"  {bold('JSON:')} {selected.name}")
+    print(f"  {bold('Título:')} {book['title']}")
+    print(f"  {bold('Autor:')} {book['author']}")
+    print(f"  {bold('Idioma:')} {book['language']}")
+    print(f"  {bold('Capítulos:')} {len(data.get('chapters') or [])}")
+    print(f"  {bold('Capa:')} {display_path(cover)}")
 
-    print(f"\n=== {label} ===")
-    print(f"JSON: {selected.name}")
-    print(f"Título: {book['title']}")
-    print(f"Autor: {book['author']}")
-    print(f"Idioma: {book['language']}")
-    print(f"Capítulos: {chapter_count}")
-    print(f"Capa: {display_path(cover)}")
+    print()
+    print(f"  {green(1)}. Gerar EPUB")
+    print(f"  {green(0)}. Voltar")
 
-    print("\n1. Gerar EPUB")
-    print("0. Voltar")
+    choice = ask_number(
+        "\nSelecione uma opção › ",
+        {0, 1},
+    )
 
-    confirm = ask_number("\nEscolha uma opção: ", {0, 1})
-
-    if confirm == 0:
+    if choice == 0:
         return
 
     output = build_epub(selected, mode=mode)
-    print(f"\nOK: EPUB gerado em {display_path(output)}")
+    print(f"\n{green('OK:')} {display_path(output)}")
 
-    if not cover:
-        print("AVISO: EPUB gerado sem capa.")
+
+def menu_epub():
+    while True:
+        print()
+        print(green(bold("  [🟢 PRODUÇÃO DE EPUB]")))
+        option(
+            "1",
+            "📘",
+            "EPUB original",
+            "Estrutura original da fonte",
+        )
+        option(
+            "2",
+            "📗",
+            "EPUB sem redundância",
+            "Título consolidado + frase destacada",
+        )
+        print(f"  {green(0)}. ↩️  Voltar")
+
+        choice = ask_number(
+            "\nSelecione uma opção › ",
+            {0, 1, 2},
+        )
+
+        if choice == 0:
+            return
+        if choice == 1:
+            generate_epub(MODE_STANDARD)
+        elif choice == 2:
+            generate_epub(MODE_NO_REDUNDANCY)
+
+
+def menu_correct_json():
+    print()
+    print(yellow(bold("  [🟡 REVISÃO DE JSON]")))
+
+    files = [
+        path
+        for path in json_files()
+        if not path.stem.endswith("_ajustado")
+        and not path.stem.endswith("_corrigido")
+    ]
+
+    selected = select_file(
+        files,
+        "JSONs disponíveis para ajuste",
+    )
+    if selected is None:
+        return
+
+    print()
+    print("  • preserva a fonte original em campos source_*")
+    print("  • aplica apenas referências físicas confirmadas")
+    print("  • mantém casos duvidosos como review")
+    print("  • gera um novo JSON sem sobrescrever o original")
+
+    print()
+    print(f"  {green(1)}. Gerar JSON ajustado")
+    print(f"  {green(0)}. Voltar")
+
+    choice = ask_number(
+        "\nSelecione uma opção › ",
+        {0, 1},
+    )
+    if choice == 0:
+        return
+
+    result = correct_json_file(selected)
+
+    print(f"\n{green('OK:')} {display_path(result['output'])}")
+    print(
+        "  Ajustes confirmados: "
+        f"{result['reference_override_count']}"
+    )
+    print(f"  Casos para revisão: {result['review_count']}")
 
 
 def menu_correct_translated_titles():
-    print("\n=== Ajustar títulos do EPUB traduzido ===")
+    print()
+    print(green(bold("  [🟢 PÓS-TRADUÇÃO]")))
 
     TRANSLATED_EPUB_DIR.mkdir(parents=True, exist_ok=True)
     TITLE_CSV_DIR.mkdir(parents=True, exist_ok=True)
@@ -155,7 +312,6 @@ def menu_correct_translated_titles():
         sorted(TRANSLATED_EPUB_DIR.glob("*.epub")),
         "EPUBs traduzidos disponíveis",
     )
-
     if epub is None:
         return
 
@@ -163,54 +319,115 @@ def menu_correct_translated_titles():
         sorted(TITLE_CSV_DIR.glob("*.csv")),
         "CSVs de títulos disponíveis",
     )
-
     if csv_file is None:
         return
 
-    print("\nArquivos selecionados:")
-    print(f"EPUB: {epub.name}")
-    print(f"CSV: {csv_file.name}")
-
-    print("\n1. Aplicar correção")
-    print("0. Voltar")
-
-    confirm = ask_number("\nEscolha uma opção: ", {0, 1})
-
-    if confirm == 0:
+    adjusted_json = select_file(
+        adjusted_json_files(),
+        "JSONs ajustados disponíveis",
+    )
+    if adjusted_json is None:
+        print(
+            f"\n{yellow('AVISO:')} gere primeiro um JSON ajustado "
+            "pela opção 2."
+        )
         return
 
-    result = correct_epub_titles(epub, csv_file)
+    print()
+    print(f"  {bold('EPUB:')} {epub.name}")
+    print(f"  {bold('CSV:')} {csv_file.name}")
+    print(f"  {bold('JSON estrutural:')} {adjusted_json.name}")
 
-    print("\n=== Resultado ===")
-    print(f"Títulos disponíveis no CSV: {result['titles_in_csv']}")
-    print(f"Capítulos alterados: {result['corrected_count']}")
-    print(f"nav.xhtml atualizado: {'sim' if result['nav_updated'] else 'não'}")
-    print(f"toc.ncx atualizado: {'sim' if result['ncx_updated'] else 'não'}")
-    print(f"Saída: {display_path(result['output'])}")
+    print()
+    print(f"  {green(1)}. Aplicar correção estrutural")
+    print(f"  {green(0)}. Voltar")
+
+    choice = ask_number(
+        "\nSelecione uma opção › ",
+        {0, 1},
+    )
+    if choice == 0:
+        return
+
+    result = correct_epub_titles(
+        epub,
+        csv_file,
+        adjusted_json,
+    )
+
+    print()
+    print(green(bold("  Correção concluída")))
+    print(f"  Separador CSV: {repr(result['delimiter'])}")
+    print(f"  Entradas estruturais: {result['mapped_entries']}")
+    print(f"  Títulos alterados: {result['corrected_count']}")
+    print(
+        f"  Spine reorganizado: "
+        f"{'sim' if result['spine_updated'] else 'não'}"
+    )
+    print(
+        f"  nav.xhtml atualizado: "
+        f"{'sim' if result['nav_updated'] else 'não'}"
+    )
+    print(
+        f"  toc.ncx atualizado: "
+        f"{'sim' if result['ncx_updated'] else 'não'}"
+    )
+    print(f"  {green('Saída:')} {display_path(result['output'])}")
 
 
 def main():
     while True:
-        print("\n=== Zhenhunxiaoshuo ===")
-        print("1. Gerar JSON dos capítulos")
-        print("2. Gerar EPUB")
-        print("3. Gerar EPUB sem redundância")
-        print("4. Ajustar títulos do EPUB traduzido")
-        print("0. Sair")
+        main_header()
 
-        option = ask_number("\nEscolha uma opção: ", {0, 1, 2, 3, 4})
+        print()
+        print(yellow(bold("  [🟡 MANIPULAÇÃO DE JSON]")))
+        option(
+            "1",
+            "📂",
+            "Extração",
+            "Extrair capítulos e gerar JSON",
+        )
+        option(
+            "2",
+            "📝",
+            "Revisão",
+            "Ajustar JSON com referência física",
+        )
 
-        if option == 0:
-            print("Encerrado.")
+        print()
+        print(green(bold("  [🟢 PRODUÇÃO DE EPUB]")))
+        option(
+            "3",
+            "📚",
+            "Geração",
+            "Gerar arquivo EPUB final",
+        )
+        option(
+            "4",
+            "🔧",
+            "Pós-Trad",
+            "Ajustar títulos do EPUB traduzido",
+        )
+
+        print()
+        separator()
+        print(f"  {green(0)}. 🚪 Sair")
+
+        choice = ask_number(
+            "  Selecione uma opção › ",
+            {0, 1, 2, 3, 4},
+        )
+
+        if choice == 0:
+            print(gray("\n  Encerrado."))
             return
-
-        if option == 1:
+        if choice == 1:
             menu_json()
-        elif option == 2:
-            generate_epub(MODE_STANDARD)
-        elif option == 3:
-            generate_epub(MODE_NO_REDUNDANCY)
-        elif option == 4:
+        elif choice == 2:
+            menu_correct_json()
+        elif choice == 3:
+            menu_epub()
+        elif choice == 4:
             menu_correct_translated_titles()
 
 

@@ -8,10 +8,11 @@ from .parser import parse_chapter
 from .storage import save_book
 
 ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_config():
-    return json.loads((ROOT / "config_zhenhunxiaoshuo.json").read_text(encoding="utf-8"))
+    return json.loads((PROJECT_ROOT / "config_zhenhunxiaoshuo.json").read_text(encoding="utf-8"))
 
 
 def load_chapter_rows(csv_path):
@@ -35,7 +36,7 @@ def load_chapter_rows(csv_path):
 
 def run(limit=None):
     config = load_config()
-    rows = load_chapter_rows(ROOT / config["input_csv"])
+    rows = load_chapter_rows(PROJECT_ROOT / config["input_csv"])
     if limit is not None:
         rows = rows[:limit]
 
@@ -61,7 +62,7 @@ def run(limit=None):
         )
 
     book_id = config["book"]["id"]
-    output = ROOT / config["output_dir"] / "json" / f"{book_id}.json"
+    output = PROJECT_ROOT / config["output_dir"] / f"{book_id}.json"
     save_book(chapters, output)
     print(f"\nOK: {len(chapters)} capítulos salvos em {output}")
     return output

@@ -8,11 +8,12 @@ from .epub.loader import load_book_from_json
 from .epub.validator import validate_epub
 
 ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_config():
     return json.loads(
-        (ROOT / "config_zhenhunxiaoshuo.json").read_text(encoding="utf-8")
+        (PROJECT_ROOT / "config_zhenhunxiaoshuo.json").read_text(encoding="utf-8")
     )
 
 def run(*, json_path, title, author="", language="pt-BR",
@@ -21,7 +22,7 @@ def run(*, json_path, title, author="", language="pt-BR",
 
     if cover is None:
         config = load_config()
-        candidate = ROOT / config.get("cover_path", "input/assets/cover.jpg")
+        candidate = PROJECT_ROOT / config.get("cover_path", "producao_epub/input/capas/cover.jpg")
         if candidate.is_file():
             cover = candidate
 
@@ -32,7 +33,7 @@ def run(*, json_path, title, author="", language="pt-BR",
 
     output_path = (
         Path(output).resolve()
-        if output else ROOT / load_config().get("epub_output_dir", "output/epub") / f"{_slugify(title)}.epub"
+        if output else PROJECT_ROOT / load_config().get("epub_output_dir", "producao_epub/output/gerados/padrao") / f"{_slugify(title)}.epub"
     )
 
     build_result = build_epub(book, output_path)

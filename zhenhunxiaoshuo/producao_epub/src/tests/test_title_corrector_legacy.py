@@ -1,6 +1,6 @@
 import unittest
 
-from zhenhunxiaoshuo.title_corrector import (
+from zhenhunxiaoshuo.producao_epub.src.title_corrector import (
     build_full_title,
     load_title_map,
 )

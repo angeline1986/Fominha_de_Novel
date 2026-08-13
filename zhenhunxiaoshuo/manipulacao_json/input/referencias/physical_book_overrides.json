@@ -1,0 +1,46 @@
+{
+  "reference_name": "Livro físico - trechos confirmados por foto",
+  "version": 1,
+  "notes": [
+    "Somente trechos confirmados visualmente devem entrar aqui.",
+    "As URLs da fonte continuam preservadas.",
+    "O JSON original nunca é sobrescrito."
+  ],
+  "overrides": [
+    {
+      "source_url": "https://www.zhenhunxiaoshuo.com/11257.html",
+      "chapter_type": "chapter",
+      "story_chapter_number": 151,
+      "corrected_title": "第一百五十一章 魔音",
+      "reason": "Livro físico confirma Capítulo 151 - Som maligno"
+    },
+    {
+      "source_url": "https://www.zhenhunxiaoshuo.com/11258.html",
+      "chapter_type": "chapter",
+      "story_chapter_number": 152,
+      "corrected_title": "第一百五十二章 缘分",
+      "reason": "Livro físico confirma Capítulo 152 - Destino"
+    },
+    {
+      "source_url": "https://www.zhenhunxiaoshuo.com/11260.html",
+      "chapter_type": "chapter",
+      "story_chapter_number": 153,
+      "corrected_title": "第一百五十三章 再度交锋",
+      "reason": "Livro físico confirma Capítulo 153 - Novo confronto"
+    },
+    {
+      "source_url": "https://www.zhenhunxiaoshuo.com/11261.html",
+      "chapter_type": "chapter",
+      "story_chapter_number": 154,
+      "corrected_title": "第一百五十四章 变故",
+      "reason": "Livro físico confirma Capítulo 154 - Reviravolta"
+    },
+    {
+      "source_url": "https://www.zhenhunxiaoshuo.com/11259.html",
+      "chapter_type": "extra",
+      "story_chapter_number": null,
+      "move_after_source_url": "https://www.zhenhunxiaoshuo.com/11261.html",
+      "reason": "Livro físico coloca o Extra de 20 de maio após o Capítulo 154"
+    }
+  ]
+}

@@ -6,8 +6,15 @@
     "language": "zh-CN"
   },
   "site": "https://www.zhenhunxiaoshuo.com",
-  "input_csv": "input/chapters.csv",
-  "output_dir": "output",
+  "input_csv": "manipulacao_json/input/capitulos/chapters.csv",
+  "output_dir": "manipulacao_json/output/extraidos",
+  "reviewed_output_dir": "manipulacao_json/output/revisados",
+  "cover_path": "producao_epub/input/capas/cover.jpg",
+  "epub_output_dir": "producao_epub/output/gerados/padrao",
+  "epub_no_redundancy_output_dir": "producao_epub/output/gerados/sem_redundancia",
+  "translated_epub_dir": "producao_epub/input/traduzidos",
+  "title_csv_dir": "producao_epub/input/capitulos",
+  "corrected_epub_output_dir": "producao_epub/output/pos_traducao",
   "cache_dir": "cache",
   "selectors": {
     "chapter_title": "h1.article-title",

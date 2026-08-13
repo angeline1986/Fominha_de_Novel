@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from zhenhunxiaoshuo.scraper import load_chapter_rows
+from zhenhunxiaoshuo.manipulacao_json.src.scraper import load_chapter_rows
 
 class ScraperTests(unittest.TestCase):
     def test_load_csv(self):

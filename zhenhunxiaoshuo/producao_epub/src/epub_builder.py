@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 MODE_STANDARD = "standard"
 MODE_NO_REDUNDANCY = "no_redundancy"
@@ -15,7 +16,7 @@ MODE_NO_REDUNDANCY = "no_redundancy"
 
 def load_config():
     return json.loads(
-        (ROOT / "config_zhenhunxiaoshuo.json").read_text(encoding="utf-8")
+        (PROJECT_ROOT / "config_zhenhunxiaoshuo.json").read_text(encoding="utf-8")
     )
 
 
@@ -29,19 +30,19 @@ def _cover_candidates(config):
 
     book_cover = config.get("book", {}).get("cover")
     if isinstance(book_cover, str) and book_cover.strip():
-        candidates.append(ROOT / book_cover.strip())
+        candidates.append(PROJECT_ROOT / book_cover.strip())
 
     top_cover = config.get("cover_image")
     if isinstance(top_cover, str) and top_cover.strip():
-        candidates.append(ROOT / top_cover.strip())
+        candidates.append(PROJECT_ROOT / top_cover.strip())
 
     cover_cfg = config.get("cover")
     if isinstance(cover_cfg, dict):
         path = cover_cfg.get("path")
         if isinstance(path, str) and path.strip():
-            candidates.append(ROOT / path.strip())
+            candidates.append(PROJECT_ROOT / path.strip())
 
-    for folder in ("input", "input/assets"):
+    for folder in ("producao_epub/input/capas",):
         for name in (
             "cover.jpg", "cover.jpeg", "cover.png",
             "capa.jpg", "capa.jpeg", "capa.png",
@@ -256,7 +257,12 @@ def _output_path(config, mode):
         if mode == MODE_STANDARD
         else f"{book_id}_sem_redundancia.epub"
     )
-    return ROOT / config["output_dir"] / "epub" / filename
+    output_key = (
+        "epub_output_dir"
+        if mode == MODE_STANDARD
+        else "epub_no_redundancy_output_dir"
+    )
+    return PROJECT_ROOT / config[output_key] / filename
 
 
 def build_epub(json_path, output_path=None, mode=MODE_STANDARD):

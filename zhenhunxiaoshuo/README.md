@@ -1,40 +1,147 @@
-# zhenhunxiaoshuo
+# Zhenhunxiaoshuo
 
-Módulo independente para extrair capítulos de `zhenhunxiaoshuo.com`.
-Não depende de `novellive` nem de `oceanofpdf`.
+Módulo independente do projeto **Fominha_de_Novel** para extrair capítulos de
+`zhenhunxiaoshuo.com`, estruturar os dados em JSON, aplicar referências físicas
+confirmadas, gerar EPUB e corrigir estruturalmente títulos depois da tradução.
 
-## Dados extraídos
+## Execução
 
-- Título: `h1.article-title`
-- Título + frase de efeito: `article.article-content > p:first-child`
-- História: `article.article-content > p:not(:first-child)`
+A partir da raiz do repositório:
 
-O CSV de entrada deve possuir as colunas `Título` e `Link`.
+```bash
+python -m zhenhunxiaoshuo.menu
+```
 
-## Instalação
+## Menu
 
-A partir da raiz de `Fominha_de_Novel`:
+```text
+  ZHENHUNXIAOSHUO
+  ──────────────────────────────────────────────────
 
-    python -m pip install -r zhenhunxiaoshuo/requirements.txt
+  [🟡 MANIPULAÇÃO DE JSON]
+  1. 📂 Extração       Extrair capítulos e gerar JSON
+  2. 📝 Revisão        Ajustar JSON com referência física
 
-## Teste pequeno
+  [🟢 PRODUÇÃO DE EPUB]
+  3. 📚 Geração        Gerar arquivo EPUB final
+  4. 🔧 Pós-Trad       Ajustar títulos do EPUB traduzido
 
-    python -m zhenhunxiaoshuo.scraper --limit 3
+  ──────────────────────────────────────────────────
+  0. 🚪 Sair
+  Selecione uma opção ›
+```
 
-## Execução completa
+As cores usam ANSI quando o terminal oferece suporte. Para desativá-las:
 
-    python -m zhenhunxiaoshuo.scraper
+```bash
+NO_COLOR=1 python -m zhenhunxiaoshuo.menu
+```
 
-## Testes
+## Fluxo
 
-    python -m unittest discover -s zhenhunxiaoshuo/tests
+```text
+Site + chapters.csv
+        ↓
+1. Extração
+        ↓
+JSON original
+        ↓
+2. Revisão com referência física
+        ↓
+JSON ajustado
+        ↓
+3. Geração de EPUB
+        ↓
+Tradução / Calibre
+        ↓
+4. Pós-Trad
+        ├── EPUB traduzido
+        ├── CSV de títulos
+        └── JSON ajustado
+        ↓
+EPUB traduzido corrigido
+```
 
-## Saída inicial
+## Correção estrutural pós-tradução
 
-O M1 gera:
+A opção **4. Pós-Trad** exige três entradas:
 
-    zhenhunxiaoshuo/output/di_wang_gong_lue.json
+```text
+producao_epub/input/traduzidos/*.epub
+producao_epub/input/capitulos/comparacao_capitulos.csv
+manipulacao_json/output/revisados/*_ajustado.json
+```
 
-Cada capítulo preserva separadamente `csv_title`, `chapter_title`,
-`chapter_lead` e `paragraphs`, permitindo detectar divergências entre
-o índice CSV e o título real da página.
+O CSV pode usar `;` ou `,`; o separador é detectado automaticamente.
+
+O JSON ajustado é obrigatório porque a correspondência correta não pode ser
+feita apenas por número de capítulo. A obra possui extras, duplicidades e
+numerações inconsistentes na fonte.
+
+O corretor usa:
+
+```text
+corrected_position
+    → identifica qual XHTML contém aquele conteúdo no EPUB traduzido
+
+story_chapter_number
+    → identifica qual título editorial do CSV pertence ao capítulo
+
+source_position
+    → preserva a posição original do site para auditoria
+```
+
+Isso permite, por exemplo, que o capítulo narrativo 154 esteja fisicamente em
+`chapter_155.xhtml`, enquanto o Extra de 20 de maio ocupa `chapter_156.xhtml`,
+sem que o título editorial seja aplicado ao conteúdo errado.
+
+A correção atualiza:
+
+- `<h1>` e `<title>` dos XHTMLs quando há título editorial no CSV;
+- `spine` do OPF;
+- `nav.xhtml`;
+- `toc.ncx`.
+
+Quando `Título no DOCX` está vazio, o título traduzido existente é preservado.
+Isso é importante para capítulos que ainda não possuem título editorial de
+referência e para extras.
+
+## Estrutura relevante
+
+```text
+zhenhunxiaoshuo/
+├── manipulacao_json/
+│   ├── input/
+│   │   ├── capitulos/
+│   │   └── referencias/
+│   ├── output/
+│   │   ├── extraidos/
+│   │   └── revisados/
+│   └── src/
+├── producao_epub/
+│   ├── input/
+│   │   ├── capas/
+│   │   ├── capitulos/
+│   │   └── traduzidos/
+│   ├── output/
+│   │   ├── gerados/
+│   │   └── pos_traducao/
+│   └── src/
+├── menu.py
+├── config_zhenhunxiaoshuo.json
+└── README.md
+```
+
+## Segurança dos dados
+
+O JSON original não é sobrescrito. A referência física gera um novo
+`*_ajustado.json`.
+
+Na pós-tradução, o EPUB traduzido também não é sobrescrito. O resultado é salvo
+em:
+
+```text
+zhenhunxiaoshuo/producao_epub/output/pos_traducao/
+```
+
+> Importante: o EPUB traduzido deve ter sido gerado a partir do JSON ajustado.

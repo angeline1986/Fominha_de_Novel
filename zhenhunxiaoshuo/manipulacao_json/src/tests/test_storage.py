@@ -3,8 +3,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from zhenhunxiaoshuo.models import Chapter
-from zhenhunxiaoshuo.storage import save_book
+from zhenhunxiaoshuo.manipulacao_json.src.models import Chapter
+from zhenhunxiaoshuo.manipulacao_json.src.storage import save_book
 
 class StorageTests(unittest.TestCase):
     def test_save_book(self):

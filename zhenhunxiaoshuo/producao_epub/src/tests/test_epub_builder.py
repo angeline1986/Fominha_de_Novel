@@ -4,9 +4,9 @@ import unittest
 import zipfile
 from pathlib import Path
 
-from zhenhunxiaoshuo.epub.builder import build_epub
-from zhenhunxiaoshuo.epub.loader import load_book_from_json
-from zhenhunxiaoshuo.epub.validator import validate_epub
+from zhenhunxiaoshuo.producao_epub.src.epub.builder import build_epub
+from zhenhunxiaoshuo.producao_epub.src.epub.loader import load_book_from_json
+from zhenhunxiaoshuo.producao_epub.src.epub.validator import validate_epub
 
 class EpubBuilderTests(unittest.TestCase):
     def test_builds_valid_epub(self):

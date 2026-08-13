@@ -1,5 +1,5 @@
 import unittest
-from zhenhunxiaoshuo.parser import parse_chapter
+from zhenhunxiaoshuo.manipulacao_json.src.parser import parse_chapter
 
 HTML = """
 <html><body>

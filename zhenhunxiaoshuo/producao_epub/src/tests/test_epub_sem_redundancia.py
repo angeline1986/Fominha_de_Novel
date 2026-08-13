@@ -1,6 +1,6 @@
 import unittest
 
-from zhenhunxiaoshuo.epub_builder import _split_lead
+from zhenhunxiaoshuo.producao_epub.src.epub_builder import _split_lead
 
 
 class EpubNoRedundancyTests(unittest.TestCase):
