@@ -1,7 +1,9 @@
 import json
 import os
 import sys
+import zipfile
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 from .manipulacao_json.src.json_corrector import (
     REVIEWED_JSON_DIR,
@@ -130,6 +132,105 @@ def select_file(files, heading):
     for index, path in enumerate(files, start=1):
         print(f"  {green(index)}. {path.name}")
     print(f"  {green(0)}. Voltar")
+
+    value = ask_number(
+        "\nSelecione uma opção › ",
+        set(range(0, len(files) + 1)),
+    )
+
+    if value == 0:
+        return None
+
+    return files[value - 1]
+
+
+def _epub_title(path):
+    try:
+        with zipfile.ZipFile(path) as archive:
+            container = ET.fromstring(archive.read("META-INF/container.xml"))
+            rootfile = next(
+                (
+                    node
+                    for node in container.iter()
+                    if node.tag.endswith("rootfile")
+                ),
+                None,
+            )
+            if rootfile is None:
+                return None
+
+            opf_path = rootfile.attrib.get("full-path")
+            if not opf_path:
+                return None
+
+            package = ET.fromstring(archive.read(opf_path))
+            title = next(
+                (
+                    node.text
+                    for node in package.iter()
+                    if node.tag.endswith("title") and node.text
+                ),
+                None,
+            )
+            return title.strip() if title else None
+    except (KeyError, ET.ParseError, OSError, zipfile.BadZipFile):
+        return None
+
+
+def _friendly_file_label(path):
+    stem = Path(path).stem.replace("_", " ").replace("-", " ")
+    words = [word.capitalize() for word in stem.split() if word]
+    return " ".join(words) or Path(path).name
+
+
+def _friendly_label(text):
+    text = str(text or "").strip()
+    if not text:
+        return ""
+    if any("\u4e00" <= char <= "\u9fff" for char in text):
+        return text
+
+    words = text.replace("_", " ").replace("-", " ").split()
+    return " ".join(words) if words else text
+
+
+def _post_translation_path(path):
+    path = Path(path)
+    parts = path.parts
+
+    markers = {
+        "gerados": 3,
+        "input": 3,
+    }
+
+    for marker, count in markers.items():
+        if marker in parts:
+            index = parts.index(marker)
+            return "/".join(parts[index:index + count])
+
+    return path.name
+
+
+def _post_translation_label(path, kind):
+    if kind == "csv":
+        if Path(path).name == "comparacao_capitulos.csv":
+            return "Comparação de capítulos"
+        return _friendly_file_label(path).replace("Csv", "").strip()
+    return _friendly_label(_epub_title(path)) or _friendly_file_label(path)
+
+
+def select_post_translation_file(files, heading, kind):
+    files = list(files)
+
+    if not files:
+        print(f"\n{yellow('AVISO:')} nenhum arquivo encontrado.")
+        return None
+
+    print(f"\n{bold(heading)}:")
+    for index, path in enumerate(files, start=1):
+        print(f"  {green(index)}. {bold(_post_translation_label(path, kind))}")
+        print(f"     └─ {_post_translation_path(path)}")
+    print(f"\n  {green(0)}. Voltar")
 
     value = ask_number(
         "\nSelecione uma opção › ",
@@ -313,35 +414,49 @@ def menu_correct_translated_titles():
     TRANSLATED_EPUB_DIR.mkdir(parents=True, exist_ok=True)
     TITLE_CSV_DIR.mkdir(parents=True, exist_ok=True)
 
-    original_epub = select_file(
+    original_epub = select_post_translation_file(
         sorted(ORIGINAL_EPUB_DIR.glob("*.epub")),
-        "EPUBs originais disponíveis",
+        "EPUB original em chinês",
+        "epub",
     )
     if original_epub is None:
         return
 
-    translated_epub = select_file(
+    translated_epub = select_post_translation_file(
         sorted(TRANSLATED_EPUB_DIR.glob("*.epub")),
-        "EPUBs traduzidos disponíveis",
+        "EPUB traduzido",
+        "epub",
     )
     if translated_epub is None:
         return
 
-    csv_file = select_file(
+    csv_file = select_post_translation_file(
         sorted(TITLE_CSV_DIR.glob("*.csv")),
-        "CSVs de títulos disponíveis",
+        "Referência dos capítulos",
+        "csv",
     )
     if csv_file is None:
         return
 
     print()
-    print(f"  {bold('EPUB original:')} {original_epub.name}")
-    print(f"  {bold('EPUB traduzido:')} {translated_epub.name}")
-    print(f"  {bold('CSV:')} {csv_file.name}")
+    print(green(bold("  [🟢 PÓS-TRADUÇÃO]")))
+    separator()
+    print()
+    print(f"  {bold('Obra:')} {_post_translation_label(original_epub, 'epub')}")
+    print()
+    print(f"  {bold('Original em chinês:')}")
+    print(f"    └─ {_post_translation_path(original_epub)}")
+    print()
+    print(f"  {bold('Traduzido:')}")
+    print(f"    └─ {_post_translation_path(translated_epub)}")
+    print()
+    print(f"  {bold('Capítulos:')}")
+    print(f"    └─ {_post_translation_path(csv_file)}")
 
     print()
-    print(f"  {green(1)}. Validar estrutura e corrigir títulos")
-    print(f"  {green(0)}. Voltar")
+    separator()
+    print(f"  {green(1)}. 🔧 Validar e corrigir títulos")
+    print(f"  {green(0)}. ↩️  Voltar")
 
     choice = ask_number(
         "\nSelecione uma opção › ",
