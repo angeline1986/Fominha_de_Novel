@@ -7,4 +7,6 @@ docx_capitulos/
 Traduzidos/
 *.log
 zhenhunxiaoshuo/output/
+zhenhunxiaoshuo/manipulacao_json/output/
+zhenhunxiaoshuo/producao_epub/output/
 zhenhunxiaoshuo/README_UPDATE.md
