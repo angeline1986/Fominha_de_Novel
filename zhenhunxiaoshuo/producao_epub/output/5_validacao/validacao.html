@@ -2,26 +2,175 @@
 <html lang="pt-br">
 <head>
 <meta charset="utf-8">
-<title>Validação EPUB</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Validação final do EPUB</title>
 <style>
-body{font-family:system-ui,-apple-system,sans-serif;margin:40px;color:#2c3e50}
-h1{color:#7209b7}
-.ok{color:#087f5b} .bad{color:#c92a2a}
-table{border-collapse:collapse;width:100%;margin-top:24px}
-th,td{border:1px solid #dee2e6;padding:8px;text-align:left;vertical-align:top}
-th{background:#f8f9fa}
-code{background:#f1f3f5;padding:2px 5px;border-radius:4px}
+:root{
+  --bg:#f5f7fb; --card:#ffffff; --text:#243447; --muted:#6b7785;
+  --line:#e4e9f0; --ok:#14866d; --ok-bg:#e9f8f3;
+  --warn:#b7791f; --warn-bg:#fff7e6; --bad:#c2413b; --bad-bg:#fdeeee;
+  --info:#3366cc; --info-bg:#edf3ff; --accent:#7209b7;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:1180px;margin:0 auto;padding:32px 24px 56px}
+header{margin-bottom:24px}
+h1{margin:0 0 6px;color:var(--accent);font-size:30px}
+.subtitle{color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:22px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.metric-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.metric-value{font-size:28px;font-weight:700;margin-top:6px}
+.status{display:inline-block;padding:7px 11px;border-radius:999px;font-weight:700;font-size:13px}
+.ok{background:var(--ok-bg);color:var(--ok)} .warn{background:var(--warn-bg);color:var(--warn)}
+.bad{background:var(--bad-bg);color:var(--bad)} .info{background:var(--info-bg);color:var(--info)}
+section{margin-top:22px} section h2{font-size:18px;margin:0 0 12px}
+.summary{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--bad);border-radius:14px;padding:18px 20px}
+.summary p{margin:6px 0;line-height:1.5}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:13px}
+th{background:#f9fbfd;color:#52606d;font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+tr:last-child td{border-bottom:0}
+.issues-table{table-layout:fixed}
+.issues-table th:nth-child(1),.issues-table td:nth-child(1){width:12%}
+.issues-table th:nth-child(2),.issues-table td:nth-child(2){width:28%}
+.issues-table th:nth-child(3),.issues-table td:nth-child(3){width:18%}
+.issues-table th:nth-child(4),.issues-table td:nth-child(4){width:18%}
+.issues-table th:nth-child(5),.issues-table td:nth-child(5){width:24%}
+code{font-family:"SFMono-Regular",Consolas,monospace;font-size:12px;background:#f2f4f7;padding:2px 5px;border-radius:5px}
+.note{color:var(--muted);font-size:13px;line-height:1.5}
+.column-filter{width:auto;min-width:max-content;border:1px solid var(--line);border-radius:7px;background:#fff;color:#52606d;font:inherit;font-size:12px;font-weight:700;letter-spacing:.03em;padding:5px 26px 5px 8px;text-transform:uppercase;cursor:pointer}
+.adjust-list{display:grid;gap:5px;line-height:1.35}
+.adjust-list div{display:grid;grid-template-columns:56px 1fr;gap:10px;align-items:baseline}
+.adjust-list span{color:#52606d;font-size:12px;font-weight:700;letter-spacing:.03em}
+.adjust-list .muted{color:var(--muted)}
+details{margin-top:14px} summary{cursor:pointer;color:var(--info);font-weight:700}
+.footer{margin-top:28px;color:var(--muted);font-size:12px}
+@media (max-width:950px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.grid{grid-template-columns:1fr} main{padding:20px 14px 40px}}
 </style>
 </head>
 <body>
-<h1>Validação final do EPUB</h1>
-<p><strong>Status:</strong> <span class="bad">REVISÃO NECESSÁRIA</span></p>
-<p><strong>EPUB:</strong> A estrategia do imperador_final.epub</p>
-<p><strong>Referência:</strong> physical_book_overrides.json</p>
-<p><strong>ref_id:</strong> 66 encontrados, 0 duplicados</p>
-<p><strong>Erros:</strong> 46 &nbsp; <strong>Avisos:</strong> 1</p>
-<table>
-<thead><tr><th>#</th><th>ref_id</th><th>Título</th><th>Status</th><th>Detalhes</th></tr></thead>
-<tbody><tr><td>1</td><td>zhenhun-11126</td><td>Capítulo 21 - A caixa de madeira</td><td>OK</td><td>—</td></tr><tr><td>2</td><td>zhenhun-11128</td><td>Capítulo 23 - A montanha de ouro fora da cidade</td><td>OK</td><td>—</td></tr><tr><td>3</td><td>zhenhun-11129</td><td>Capítulo 24 - Wei Ziyi</td><td>OK</td><td>—</td></tr><tr><td>4</td><td>zhenhun-11130</td><td>Capítulo 25 - Gui Lai</td><td>OK</td><td>—</td></tr><tr><td>5</td><td>zhenhun-11131</td><td>Capítulo 26 - Retorno à Cidade Imperial</td><td>OK</td><td>—</td></tr><tr><td>6</td><td>zhenhun-11201</td><td>Capítulo 95 - Pingente de dragão de jade</td><td>OK</td><td>—</td></tr><tr><td>7</td><td>zhenhun-11202</td><td>Capítulo 96 - Véspera da Grande Guerra</td><td>OK</td><td>—</td></tr><tr><td>8</td><td>zhenhun-11203</td><td>Capítulo 97 - Rebelião em Suizhou</td><td>OK</td><td>—</td></tr><tr><td>9</td><td>zhenhun-11234</td><td>Capítulo 128 - Acidentalmente</td><td>OK</td><td>—</td></tr><tr><td>10</td><td>zhenhun-11235</td><td>Capítulo 129 - Expedição</td><td>OK</td><td>—</td></tr><tr><td>11</td><td>zhenhun-11236</td><td>Capítulo 130 - Dois Carecas</td><td>OK</td><td>—</td></tr><tr><td>12</td><td>zhenhun-11237</td><td>Capítulo 131 - Miaoxin</td><td>OK</td><td>—</td></tr><tr><td>13</td><td>zhenhun-11249</td><td>Capítulo 143 - Quebrando a formação</td><td>OK</td><td>—</td></tr><tr><td>14</td><td>zhenhun-11250</td><td>Capítulo 144 - Miragem</td><td>OK</td><td>—</td></tr><tr><td>15</td><td>zhenhun-11251</td><td>Capítulo 145 - Névoa venenosa</td><td>OK</td><td>—</td></tr><tr><td>16</td><td>zhenhun-11252</td><td>Capítulo 146 - O que aconteceu?</td><td>OK</td><td>—</td></tr><tr><td>17</td><td>zhenhun-11257</td><td>Capítulo 151 - Som maligno</td><td>OK</td><td>—</td></tr><tr><td>18</td><td>zhenhun-11258</td><td>Capítulo 152 - Destino</td><td>OK</td><td>—</td></tr><tr><td>19</td><td>zhenhun-11260</td><td>Capítulo 153 - Novo confronto</td><td>OK</td><td>—</td></tr><tr><td>20</td><td>zhenhun-11261</td><td>Capítulo 154 - Reviravolta</td><td>OK</td><td>—</td></tr><tr><td>21</td><td>zhenhun-11259</td><td>Capítulo 154 [520 Capítulo Extra] Juventude</td><td>ERRO</td><td>extra apresentado como capítulo numerado<br>título não contém o rótulo físico: Capítulo Extra de 20 de maio</td></tr><tr><td>22</td><td>zhenhun-11262</td><td>Capítulo 155 - À Beira do Céu</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>23</td><td>zhenhun-11263</td><td>Capítulo 156 - Melhor levá-los para a guerra</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>24</td><td>zhenhun-11264</td><td>Capítulo 157 Encontrando</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>25</td><td>zhenhun-11265</td><td>Capítulo 158 - Reencontro</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>26</td><td>zhenhun-11266</td><td>Capítulo 159 - Amantes</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>27</td><td>zhenhun-11267</td><td>Capítulo 160 - Segredos Ocultos na Ilha Deserta</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>28</td><td>zhenhun-11268</td><td>Capítulo 161 - Ternura</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>29</td><td>zhenhun-11269</td><td>Capítulo 162 - Mestre</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>30</td><td>zhenhun-11270</td><td>Capítulo 164 - Qual é exatamente a utilidade das contas?</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>31</td><td>zhenhun-11271</td><td>Capítulo 164 - O Exército Marcha para a Batalha</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>32</td><td>zhenhun-11272</td><td>Capítulo 165 - Sons Estranhos</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>33</td><td>zhenhun-11273</td><td>Capítulo 166 - Melhor Pedir Demissão</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>34</td><td>zhenhun-11274</td><td>Capítulo 167 - Ataque à Ilha</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>35</td><td>zhenhun-11275</td><td>Capítulo 168 - Vitória</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>36</td><td>zhenhun-11276</td><td>Capítulo 169 - Ganho Inesperado</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>37</td><td>zhenhun-11277</td><td>Capítulo 170 - A chamada celebração universal</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>38</td><td>zhenhun-11278</td><td>Capítulo 171 - Olá, Mestre</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>39</td><td>zhenhun-11279</td><td>Capítulo 172 - Deixando o Espelho</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>40</td><td>zhenhun-11280</td><td>Capítulo 173 - Zumbis</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>41</td><td>zhenhun-11281</td><td>Capítulo 174 - Mistério</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>42</td><td>zhenhun-11282</td><td>Capítulo 175 - O Caixão de Gelo</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>43</td><td>zhenhun-11283</td><td>Capítulo 176 - O Fantoche</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>44</td><td>zhenhun-11284</td><td>Capítulo 177 - A Batalha Final (Parte 1)</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>45</td><td>zhenhun-11285</td><td>Capítulo 178 A Batalha Final (Parte 2)</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>46</td><td>zhenhun-11286</td><td>Capítulo 179 - A Batalha Final (Parte 2)</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>47</td><td>zhenhun-11287</td><td>Capítulo 180 - Um Encontro Fortuito</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>48</td><td>zhenhun-11288</td><td>Capítulo 181 - A Viagem de Retorno</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>49</td><td>zhenhun-11289</td><td>Capítulo 182 - Retornando para casa</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>50</td><td>zhenhun-11290</td><td>Capítulo 183 - O Casamento</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>51</td><td>zhenhun-11291</td><td>Capítulo 184 - Os Recém-Casados</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>52</td><td>zhenhun-11292</td><td>Capítulo 185 - Retornando ao Palácio</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>53</td><td>zhenhun-11293</td><td>Capítulo 186 - Depois do Casamento</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>54</td><td>zhenhun-11294</td><td>Capítulo 187 - Ano Novo</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>55</td><td>zhenhun-11295</td><td>Capítulo 188 - O Rei Absoluto dos Sete Está Chegando</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>56</td><td>zhenhun-11296</td><td>Capítulo 189 - Mestre</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>57</td><td>zhenhun-11297</td><td>Capítulo 190 - Celebração Universal</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>58</td><td>zhenhun-11298</td><td>Capítulo 191 - Paraíso</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>59</td><td>zhenhun-11299</td><td>Encontro com Borboletas 1 (Capítulo Bônus)</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>60</td><td>zhenhun-11300</td><td>História Paralela - Encontro com a Borboleta 2</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>61</td><td>zhenhun-11301</td><td>História Paralela - Encontro com a Borboleta 3</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>62</td><td>zhenhun-11302</td><td>História Paralela - Encontro com a Borboleta 4</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>63</td><td>zhenhun-11303</td><td>História Paralela - Encontro com a Borboleta 5</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>64</td><td>zhenhun-11304</td><td>História Paralela - Competição de Artes Marciais (Parte 1)</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>65</td><td>zhenhun-11305</td><td>História Paralela: Competição de Artes Marciais (Parte 2)</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr><tr><td>66</td><td>zhenhun-11306</td><td>Vida extra-cotidiana na Prefeitura do Sudoeste</td><td>ERRO</td><td>ref_id não existe na referência física</td></tr></tbody>
-</table>
+<main>
+  <header>
+    <h1>Validação final do EPUB</h1>
+    <div class="subtitle">A estrategia do imperador_final.epub · referência: physical_book_overrides.json</div>
+  </header>
+
+  <div class="summary">
+    <span class="status bad">REVISÃO NECESSÁRIA</span>
+    <p><strong>Resumo:</strong> o contrato de identidade está preservado e os itens cobertos pela referência física foram avaliados separadamente.</p>
+    <p>Foi encontrada 1 divergência editorial real. 45 itens não possuem referência física aplicável e, portanto, não são considerados erros.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card"><div class="metric-label">ref_id encontrados</div><div class="metric-value">66</div></div>
+    <div class="card"><div class="metric-label">ref_id duplicados</div><div class="metric-value">0</div></div>
+    <div class="card"><div class="metric-label">Cobertos pela referência</div><div class="metric-value">21</div></div>
+    <div class="card"><div class="metric-label">Divergências reais</div><div class="metric-value">1</div></div>
+    <div class="card"><div class="metric-label">Sem referência física</div><div class="metric-value">45</div></div>
+  </div>
+
+  <section>
+    <h2>1. Integridade estrutural</h2>
+    <table>
+      <thead><tr><th>Verificação</th><th><select class="column-filter" id="filter-integrity" data-filter-target="table-integrity" aria-label="Filtrar por resultado"><option value="Todos">RESULTADO</option><option value="ATENÇÃO">ATENÇÃO</option><option value="OK">OK</option></select></th><th>Observação</th></tr></thead>
+      <tbody id="table-integrity"><tr data-status="ATENÇÃO"><td>Tipos chapter/extra</td><td><span class="status warn">ATENÇÃO</span></td><td>1 item(ns) extra exigem atenção na apresentação editorial.</td></tr><tr data-status="OK"><td>Duplicidade de ref_id</td><td><span class="status ok">OK</span></td><td>Nenhum identificador duplicado.</td></tr><tr data-status="OK"><td>Ordem dos itens cobertos</td><td><span class="status ok">OK</span></td><td>Ordem compatível com editorial_position nos itens que possuem referência.</td></tr><tr data-status="OK"><td>Quantidade de ref_id</td><td><span class="status ok">OK</span></td><td>66 identificadores encontrados.</td></tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>2. Itens cobertos pela referência física</h2>
+    <table>
+      <thead><tr><th>ref_id</th><th>Esperado</th><th>Encontrado</th><th><select class="column-filter" id="filter-covered" data-filter-target="table-covered" aria-label="Filtrar por status"><option value="Todos">STATUS</option><option value="DIVERGÊNCIA">DIVERGÊNCIA</option><option value="OK">OK</option></select></th></tr></thead>
+      <tbody id="table-covered"><tr data-status="DIVERGÊNCIA"><td><code>zhenhun-11259</code></td><td>Extra: Capítulo Extra de 20 de maio</td><td>Extra - Capítulo 154 [520 Capítulo Extra] Juventude</td><td><span class="status bad">DIVERGÊNCIA</span></td></tr><tr data-status="OK"><td><code>zhenhun-11126</code></td><td>Capítulo 21</td><td>Capítulo 21 - A caixa de madeira</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11128</code></td><td>Capítulo 23</td><td>Capítulo 23 - A montanha de ouro fora da cidade</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11129</code></td><td>Capítulo 24</td><td>Capítulo 24 - Wei Ziyi</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11130</code></td><td>Capítulo 25</td><td>Capítulo 25 - Gui Lai</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11131</code></td><td>Capítulo 26</td><td>Capítulo 26 - Retorno à Cidade Imperial</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11201</code></td><td>Capítulo 95</td><td>Capítulo 95 - Pingente de dragão de jade</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11202</code></td><td>Capítulo 96</td><td>Capítulo 96 - Véspera da Grande Guerra</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11203</code></td><td>Capítulo 97</td><td>Capítulo 97 - Rebelião em Suizhou</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11234</code></td><td>Capítulo 128</td><td>Capítulo 128 - Acidentalmente</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11235</code></td><td>Capítulo 129</td><td>Capítulo 129 - Expedição</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11236</code></td><td>Capítulo 130</td><td>Capítulo 130 - Dois Carecas</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11237</code></td><td>Capítulo 131</td><td>Capítulo 131 - Miaoxin</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11249</code></td><td>Capítulo 143</td><td>Capítulo 143 - Quebrando a formação</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11250</code></td><td>Capítulo 144</td><td>Capítulo 144 - Miragem</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11251</code></td><td>Capítulo 145</td><td>Capítulo 145 - Névoa venenosa</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11252</code></td><td>Capítulo 146</td><td>Capítulo 146 - O que aconteceu?</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11257</code></td><td>Capítulo 151</td><td>Capítulo 151 - Som maligno</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11258</code></td><td>Capítulo 152</td><td>Capítulo 152 - Destino</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11260</code></td><td>Capítulo 153</td><td>Capítulo 153 - Novo confronto</td><td><span class="status ok">OK</span></td></tr><tr data-status="OK"><td><code>zhenhun-11261</code></td><td>Capítulo 154</td><td>Capítulo 154 - Reviravolta</td><td><span class="status ok">OK</span></td></tr></tbody>
+    </table>
+    <p class="note">A tabela mostra apenas itens presentes em <code>physical_book_overrides.json</code>.</p>
+  </section>
+
+  <section>
+    <h2>3. Divergências que exigem ação</h2>
+    <table class="issues-table"><thead><tr><th>Ref ID</th><th>Onde ajustar</th><th>Como está</th><th>Como deveria estar</th><th>Motivo</th></tr></thead><tbody><tr><td><code>zhenhun-11259</code></td><td><div class="adjust-list"><div><span>XHTML</span> chapter_021.xhtml → &lt;h1&gt;</div><div><span>NCX</span> toc.ncx → navPoint</div><div class="muted"><span>NAV</span> não disponível</div></div></td><td>Capítulo 154 [520 Capítulo Extra] Juventude</td><td>Capítulo Extra de 20 de maio — Juventude</td><td>A referência física classifica o item como extra, mas o título visível o apresenta como capítulo regular.</td></tr></tbody></table>
+    <p class="note">1 divergência encontrada.</p>
+    <p class="note">Corrija o item indicado na coluna "Onde ajustar" e execute novamente: <strong>5. Validação</strong>.</p>
+  </section>
+
+  <section>
+    <h2>4. Itens sem referência física</h2>
+    <div class="card">
+      <span class="status info">SEM REFERÊNCIA FÍSICA</span>
+      <p><strong>45 item(ns)</strong> não estão presentes em <code>physical_book_overrides.json</code>.</p>
+      <p class="note">Isso não significa erro. Esses itens apenas não podem ser validados contra essa referência específica. Eles continuam sujeitos às validações estruturais do EPUB e do contrato de identidade.</p>
+      <details><summary>Listar itens sem referência física</summary><table><thead><tr><th>ref_id</th><th>Título</th></tr></thead><tbody><tr><td><code>zhenhun-11262</code></td><td>Capítulo 155 - À Beira do Céu</td></tr>
+<tr><td><code>zhenhun-11263</code></td><td>Capítulo 156 - Melhor levá-los para a guerra</td></tr>
+<tr><td><code>zhenhun-11264</code></td><td>Capítulo 157 Encontrando</td></tr>
+<tr><td><code>zhenhun-11265</code></td><td>Capítulo 158 - Reencontro</td></tr>
+<tr><td><code>zhenhun-11266</code></td><td>Capítulo 159 - Amantes</td></tr>
+<tr><td><code>zhenhun-11267</code></td><td>Capítulo 160 - Segredos Ocultos na Ilha Deserta</td></tr>
+<tr><td><code>zhenhun-11268</code></td><td>Capítulo 161 - Ternura</td></tr>
+<tr><td><code>zhenhun-11269</code></td><td>Capítulo 162 - Mestre</td></tr>
+<tr><td><code>zhenhun-11270</code></td><td>Capítulo 164 - Qual é exatamente a utilidade das contas?</td></tr>
+<tr><td><code>zhenhun-11271</code></td><td>Capítulo 164 - O Exército Marcha para a Batalha</td></tr>
+<tr><td><code>zhenhun-11272</code></td><td>Capítulo 165 - Sons Estranhos</td></tr>
+<tr><td><code>zhenhun-11273</code></td><td>Capítulo 166 - Melhor Pedir Demissão</td></tr>
+<tr><td><code>zhenhun-11274</code></td><td>Capítulo 167 - Ataque à Ilha</td></tr>
+<tr><td><code>zhenhun-11275</code></td><td>Capítulo 168 - Vitória</td></tr>
+<tr><td><code>zhenhun-11276</code></td><td>Capítulo 169 - Ganho Inesperado</td></tr>
+<tr><td><code>zhenhun-11277</code></td><td>Capítulo 170 - A chamada celebração universal</td></tr>
+<tr><td><code>zhenhun-11278</code></td><td>Capítulo 171 - Olá, Mestre</td></tr>
+<tr><td><code>zhenhun-11279</code></td><td>Capítulo 172 - Deixando o Espelho</td></tr>
+<tr><td><code>zhenhun-11280</code></td><td>Capítulo 173 - Zumbis</td></tr>
+<tr><td><code>zhenhun-11281</code></td><td>Capítulo 174 - Mistério</td></tr>
+<tr><td><code>zhenhun-11282</code></td><td>Capítulo 175 - O Caixão de Gelo</td></tr>
+<tr><td><code>zhenhun-11283</code></td><td>Capítulo 176 - O Fantoche</td></tr>
+<tr><td><code>zhenhun-11284</code></td><td>Capítulo 177 - A Batalha Final (Parte 1)</td></tr>
+<tr><td><code>zhenhun-11285</code></td><td>Capítulo 178 A Batalha Final (Parte 2)</td></tr>
+<tr><td><code>zhenhun-11286</code></td><td>Capítulo 179 - A Batalha Final (Parte 2)</td></tr>
+<tr><td><code>zhenhun-11287</code></td><td>Capítulo 180 - Um Encontro Fortuito</td></tr>
+<tr><td><code>zhenhun-11288</code></td><td>Capítulo 181 - A Viagem de Retorno</td></tr>
+<tr><td><code>zhenhun-11289</code></td><td>Capítulo 182 - Retornando para casa</td></tr>
+<tr><td><code>zhenhun-11290</code></td><td>Capítulo 183 - O Casamento</td></tr>
+<tr><td><code>zhenhun-11291</code></td><td>Capítulo 184 - Os Recém-Casados</td></tr>
+<tr><td><code>zhenhun-11292</code></td><td>Capítulo 185 - Retornando ao Palácio</td></tr>
+<tr><td><code>zhenhun-11293</code></td><td>Capítulo 186 - Depois do Casamento</td></tr>
+<tr><td><code>zhenhun-11294</code></td><td>Capítulo 187 - Ano Novo</td></tr>
+<tr><td><code>zhenhun-11295</code></td><td>Capítulo 188 - O Rei Absoluto dos Sete Está Chegando</td></tr>
+<tr><td><code>zhenhun-11296</code></td><td>Capítulo 189 - Mestre</td></tr>
+<tr><td><code>zhenhun-11297</code></td><td>Capítulo 190 - Celebração Universal</td></tr>
+<tr><td><code>zhenhun-11298</code></td><td>Capítulo 191 - Paraíso</td></tr>
+<tr><td><code>zhenhun-11299</code></td><td>Encontro com Borboletas 1 (Capítulo Bônus)</td></tr>
+<tr><td><code>zhenhun-11300</code></td><td>História Paralela - Encontro com a Borboleta 2</td></tr>
+<tr><td><code>zhenhun-11301</code></td><td>História Paralela - Encontro com a Borboleta 3</td></tr>
+<tr><td><code>zhenhun-11302</code></td><td>História Paralela - Encontro com a Borboleta 4</td></tr>
+<tr><td><code>zhenhun-11303</code></td><td>História Paralela - Encontro com a Borboleta 5</td></tr>
+<tr><td><code>zhenhun-11304</code></td><td>História Paralela - Competição de Artes Marciais (Parte 1)</td></tr>
+<tr><td><code>zhenhun-11305</code></td><td>História Paralela: Competição de Artes Marciais (Parte 2)</td></tr>
+<tr><td><code>zhenhun-11306</code></td><td>Vida extra-cotidiana na Prefeitura do Sudoeste</td></tr></tbody></table></details>
+    </div>
+  </section>
+
+  <section>
+    <h2>5. Conclusão</h2>
+    <div class="card">
+      <p><strong>Estado geral:</strong> <span class="status bad">REVISÃO NECESSÁRIA</span></p>
+      <p>O EPUB possui 66 ref_id encontrados, 21 item(ns) coberto(s) pela referência física e 1 divergência(s) acionável(is).</p>
+    </div>
+  </section>
+
+  <div class="footer">Relatório gerado pela opção 5 — Validação.</div>
+</main>
+<script>
+document.querySelectorAll('select[data-filter-target]').forEach(function(select) {
+  function applyFilter() {
+    var target = document.getElementById(select.dataset.filterTarget);
+    var selected = select.value;
+    if (!target) return;
+    target.querySelectorAll('tr[data-status]').forEach(function(row) {
+      row.hidden = selected !== 'Todos' && row.dataset.status !== selected;
+    });
+  }
+  select.addEventListener('change', applyFilter);
+  applyFilter();
+});
+</script>
 </body></html>
