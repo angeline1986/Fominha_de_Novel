@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+  <head>
+    <meta name="dtb:uid" content="salt-society"/>
+    <meta name="dtb:depth" content="1"/>
+    <meta name="dtb:totalPageCount" content="0"/>
+    <meta name="dtb:maxPageNumber" content="0"/>
+  </head>
+  <docTitle><text>Salt Society</text></docTitle>
+  <navMap>
+    <navPoint id="title" playOrder="1">
+      <navLabel><text>Página de Título</text></navLabel>
+      <content src="title_page.xhtml"/>
+    </navPoint>
+      <navPoint id="chap1" playOrder="2">
+      <navLabel><text>— Capítulo 00 - Prólogo</text></navLabel>
+      <content src="file0001.xhtml"/>
+    </navPoint>
+  <navPoint id="chap2" playOrder="3">
+      <navLabel><text>— Capítulo 01</text></navLabel>
+      <content src="file0002.xhtml"/>
+    </navPoint>
+  <navPoint id="chap3" playOrder="4">
+      <navLabel><text>— Capítulo 02</text></navLabel>
+      <content src="file0003.xhtml"/>
+    </navPoint>
+  <navPoint id="chap4" playOrder="5">
+      <navLabel><text>— Capítulo 03</text></navLabel>
+      <content src="file0004.xhtml"/>
+    </navPoint>
+  <navPoint id="chap5" playOrder="6">
+      <navLabel><text>— Capítulo 04</text></navLabel>
+      <content src="file0005.xhtml"/>
+    </navPoint>
+  <navPoint id="chap6" playOrder="7">
+      <navLabel><text>— Capítulo 05</text></navLabel>
+      <content src="file0006.xhtml"/>
+    </navPoint>
+  <navPoint id="chap7" playOrder="8">
+      <navLabel><text>— Capítulo 06</text></navLabel>
+      <content src="file0007.xhtml"/>
+    </navPoint>
+  <navPoint id="chap8" playOrder="9">
+      <navLabel><text>— Capítulo 07</text></navLabel>
+      <content src="file0008.xhtml"/>
+    </navPoint>
+  <navPoint id="chap9" playOrder="10">
+      <navLabel><text>— Capítulo 08</text></navLabel>
+      <content src="file0009.xhtml"/>
+    </navPoint>
+  <navPoint id="chap10" playOrder="11">
+      <navLabel><text>— Capítulo 09</text></navLabel>
+      <content src="file0010.xhtml"/>
+    </navPoint>
+  <navPoint id="chap11" playOrder="12">
+      <navLabel><text>— Capítulo 10</text></navLabel>
+      <content src="file0011.xhtml"/>
+    </navPoint>
+  <navPoint id="chap12" playOrder="13">
+      <navLabel><text>— Capítulo 11</text></navLabel>
+      <content src="file0012.xhtml"/>
+    </navPoint>
+  <navPoint id="chap13" playOrder="14">
+      <navLabel><text>— Capítulo 12</text></navLabel>
+      <content src="file0013.xhtml"/>
+    </navPoint>
+  <navPoint id="chap14" playOrder="15">
+      <navLabel><text>— Capítulo 13</text></navLabel>
+      <content src="file0014.xhtml"/>
+    </navPoint>
+  <navPoint id="chap15" playOrder="16">
+      <navLabel><text>— Capítulo 14</text></navLabel>
+      <content src="file0015.xhtml"/>
+    </navPoint>
+  <navPoint id="chap16" playOrder="17">
+      <navLabel><text>— Capítulo 15</text></navLabel>
+      <content src="file0016.xhtml"/>
+    </navPoint>
+  <navPoint id="chap17" playOrder="18">
+      <navLabel><text>— Capítulo 16</text></navLabel>
+      <content src="file0017.xhtml"/>
+    </navPoint>
+  <navPoint id="chap18" playOrder="19">
+      <navLabel><text>— Capítulo 17</text></navLabel>
+      <content src="file0018.xhtml"/>
+    </navPoint>
+  <navPoint id="chap19" playOrder="20">
+      <navLabel><text>— Capítulo 18</text></navLabel>
+      <content src="file0019.xhtml"/>
+    </navPoint>
+  <navPoint id="chap20" playOrder="21">
+      <navLabel><text>— Capítulo 19</text></navLabel>
+      <content src="file0020.xhtml"/>
+    </navPoint>
+  <navPoint id="chap21" playOrder="22">
+      <navLabel><text>— Capítulo 20</text></navLabel>
+      <content src="file0021.xhtml"/>
+    </navPoint>
+  <navPoint id="chap22" playOrder="23">
+      <navLabel><text>— Capítulo 21</text></navLabel>
+      <content src="file0022.xhtml"/>
+    </navPoint>
+  <navPoint id="chap23" playOrder="24">
+      <navLabel><text>— Capítulo 22</text></navLabel>
+      <content src="file0023.xhtml"/>
+    </navPoint>
+  <navPoint id="chap24" playOrder="25">
+      <navLabel><text>— Capítulo 23</text></navLabel>
+      <content src="file0024.xhtml"/>
+    </navPoint>
+  <navPoint id="chap25" playOrder="26">
+      <navLabel><text>— Capítulo 24</text></navLabel>
+      <content src="file0025.xhtml"/>
+    </navPoint>
+  <navPoint id="chap26" playOrder="27">
+      <navLabel><text>— Capítulo 25</text></navLabel>
+      <content src="file0026.xhtml"/>
+    </navPoint>
+  <navPoint id="chap27" playOrder="28">
+      <navLabel><text>— Capítulo 26</text></navLabel>
+      <content src="file0027.xhtml"/>
+    </navPoint>
+  <navPoint id="chap28" playOrder="29">
+      <navLabel><text>— Capítulo 27</text></navLabel>
+      <content src="file0028.xhtml"/>
+    </navPoint>
+  <navPoint id="chap29" playOrder="30">
+      <navLabel><text>— Capítulo 28</text></navLabel>
+      <content src="file0029.xhtml"/>
+    </navPoint>
+  <navPoint id="chap30" playOrder="31">
+      <navLabel><text>— Capítulo 29</text></navLabel>
+      <content src="file0030.xhtml"/>
+    </navPoint>
+  <navPoint id="chap31" playOrder="32">
+      <navLabel><text>— Capítulo 30</text></navLabel>
+      <content src="file0031.xhtml"/>
+    </navPoint>
+  <navPoint id="chap32" playOrder="33">
+      <navLabel><text>— Capítulo 31</text></navLabel>
+      <content src="file0032.xhtml"/>
+    </navPoint>
+  <navPoint id="chap33" playOrder="34">
+      <navLabel><text>— Capítulo 32</text></navLabel>
+      <content src="file0033.xhtml"/>
+    </navPoint>
+  <navPoint id="chap34" playOrder="35">
+      <navLabel><text>— Capítulo 33</text></navLabel>
+      <content src="file0034.xhtml"/>
+    </navPoint>
+  <navPoint id="chap35" playOrder="36">
+      <navLabel><text>— Capítulo 34</text></navLabel>
+      <content src="file0035.xhtml"/>
+    </navPoint>
+  <navPoint id="chap36" playOrder="37">
+      <navLabel><text>— Capítulo 35</text></navLabel>
+      <content src="file0036.xhtml"/>
+    </navPoint>
+  <navPoint id="chap37" playOrder="38">
+      <navLabel><text>— Capítulo 36</text></navLabel>
+      <content src="file0037.xhtml"/>
+    </navPoint>
+  <navPoint id="chap38" playOrder="39">
+      <navLabel><text>— Capítulo 37</text></navLabel>
+      <content src="file0038.xhtml"/>
+    </navPoint>
+  <navPoint id="chap39" playOrder="40">
+      <navLabel><text>— Capítulo 38</text></navLabel>
+      <content src="file0039.xhtml"/>
+    </navPoint>
+  <navPoint id="chap40" playOrder="41">
+      <navLabel><text>— Capítulo 39</text></navLabel>
+      <content src="file0040.xhtml"/>
+    </navPoint>
+  <navPoint id="chap41" playOrder="42">
+      <navLabel><text>— Capítulo 40</text></navLabel>
+      <content src="file0041.xhtml"/>
+    </navPoint>
+  <navPoint id="chap42" playOrder="43">
+      <navLabel><text>— Capítulo 41</text></navLabel>
+      <content src="file0042.xhtml"/>
+    </navPoint>
+  <navPoint id="chap43" playOrder="44">
+      <navLabel><text>— Capítulo 42</text></navLabel>
+      <content src="file0043.xhtml"/>
+    </navPoint>
+  <navPoint id="chap44" playOrder="45">
+      <navLabel><text>— Capítulo 43</text></navLabel>
+      <content src="file0044.xhtml"/>
+    </navPoint>
+  <navPoint id="chap45" playOrder="46">
+      <navLabel><text>— Capítulo 44</text></navLabel>
+      <content src="file0045.xhtml"/>
+    </navPoint>
+  <navPoint id="chap46" playOrder="47">
+      <navLabel><text>— Capítulo 45</text></navLabel>
+      <content src="file0046.xhtml"/>
+    </navPoint>
+  <navPoint id="chap47" playOrder="48">
+      <navLabel><text>— Capítulo 46</text></navLabel>
+      <content src="file0047.xhtml"/>
+    </navPoint>
+  <navPoint id="chap48" playOrder="49">
+      <navLabel><text>— Capítulo 47</text></navLabel>
+      <content src="file0048.xhtml"/>
+    </navPoint>
+  <navPoint id="chap49" playOrder="50">
+      <navLabel><text>— Capítulo 48</text></navLabel>
+      <content src="file0049.xhtml"/>
+    </navPoint>
+  <navPoint id="chap50" playOrder="51">
+      <navLabel><text>— Capítulo 49</text></navLabel>
+      <content src="file0050.xhtml"/>
+    </navPoint>
+  <navPoint id="chap51" playOrder="52">
+      <navLabel><text>— Capítulo 50</text></navLabel>
+      <content src="file0051.xhtml"/>
+    </navPoint>
+  <navPoint id="chap52" playOrder="53">
+      <navLabel><text>— Capítulo 51</text></navLabel>
+      <content src="file0052.xhtml"/>
+    </navPoint>
+  <navPoint id="chap53" playOrder="54">
+      <navLabel><text>— Capítulo 52</text></navLabel>
+      <content src="file0053.xhtml"/>
+    </navPoint>
+  <navPoint id="chap54" playOrder="55">
+      <navLabel><text>— Capítulo 53</text></navLabel>
+      <content src="file0054.xhtml"/>
+    </navPoint>
+  <navPoint id="chap55" playOrder="56">
+      <navLabel><text>— Capítulo 54</text></navLabel>
+      <content src="file0055.xhtml"/>
+    </navPoint>
+  <navPoint id="chap56" playOrder="57">
+      <navLabel><text>— Capítulo 55</text></navLabel>
+      <content src="file0056.xhtml"/>
+    </navPoint>
+  <navPoint id="chap57" playOrder="58">
+      <navLabel><text>— Capítulo 56</text></navLabel>
+      <content src="file0057.xhtml"/>
+    </navPoint>
+  <navPoint id="chap58" playOrder="59">
+      <navLabel><text>— Capítulo 57</text></navLabel>
+      <content src="file0058.xhtml"/>
+    </navPoint>
+  <navPoint id="chap59" playOrder="60">
+      <navLabel><text>— Capítulo 58</text></navLabel>
+      <content src="file0059.xhtml"/>
+    </navPoint>
+  <navPoint id="chap60" playOrder="61">
+      <navLabel><text>— Capítulo 59</text></navLabel>
+      <content src="file0060.xhtml"/>
+    </navPoint>
+  <navPoint id="chap61" playOrder="62">
+      <navLabel><text>— Capítulo 60</text></navLabel>
+      <content src="file0061.xhtml"/>
+    </navPoint>
+  <navPoint id="chap62" playOrder="63">
+      <navLabel><text>— Capítulo 61</text></navLabel>
+      <content src="file0062.xhtml"/>
+    </navPoint>
+  <navPoint id="chap63" playOrder="64">
+      <navLabel><text>— Capítulo 62</text></navLabel>
+      <content src="file0063.xhtml"/>
+    </navPoint>
+  <navPoint id="chap64" playOrder="65">
+      <navLabel><text>— Capítulo 63</text></navLabel>
+      <content src="file0064.xhtml"/>
+    </navPoint>
+  <navPoint id="chap65" playOrder="66">
+      <navLabel><text>— Capítulo 64</text></navLabel>
+      <content src="file0065.xhtml"/>
+    </navPoint>
+  <navPoint id="chap66" playOrder="67">
+      <navLabel><text>— Capítulo 65</text></navLabel>
+      <content src="file0066.xhtml"/>
+    </navPoint>
+  <navPoint id="chap67" playOrder="68">
+      <navLabel><text>— Capítulo 66</text></navLabel>
+      <content src="file0067.xhtml"/>
+    </navPoint>
+  <navPoint id="chap68" playOrder="69">
+      <navLabel><text>— Capítulo 67</text></navLabel>
+      <content src="file0068.xhtml"/>
+    </navPoint>
+  <navPoint id="chap69" playOrder="70">
+      <navLabel><text>— Capítulo 68</text></navLabel>
+      <content src="file0069.xhtml"/>
+    </navPoint>
+  <navPoint id="chap70" playOrder="71">
+      <navLabel><text>— Capítulo 69</text></navLabel>
+      <content src="file0070.xhtml"/>
+    </navPoint>
+  <navPoint id="chap71" playOrder="72">
+      <navLabel><text>— Capítulo 70</text></navLabel>
+      <content src="file0071.xhtml"/>
+    </navPoint>
+  <navPoint id="chap72" playOrder="73">
+      <navLabel><text>— Capítulo 71</text></navLabel>
+      <content src="file0072.xhtml"/>
+    </navPoint>
+  <navPoint id="chap73" playOrder="74">
+      <navLabel><text>— Capítulo 72</text></navLabel>
+      <content src="file0073.xhtml"/>
+    </navPoint>
+  <navPoint id="chap74" playOrder="75">
+      <navLabel><text>— Capítulo 73</text></navLabel>
+      <content src="file0074.xhtml"/>
+    </navPoint>
+  <navPoint id="chap75" playOrder="76">
+      <navLabel><text>— Capítulo 74</text></navLabel>
+      <content src="file0075.xhtml"/>
+    </navPoint>
+  <navPoint id="chap76" playOrder="77">
+      <navLabel><text>— Capítulo 75</text></navLabel>
+      <content src="file0076.xhtml"/>
+    </navPoint>
+  <navPoint id="chap77" playOrder="78">
+      <navLabel><text>— Capítulo 76</text></navLabel>
+      <content src="file0077.xhtml"/>
+    </navPoint>
+  <navPoint id="chap78" playOrder="79">
+      <navLabel><text>— Capítulo 77</text></navLabel>
+      <content src="file0078.xhtml"/>
+    </navPoint>
+  <navPoint id="chap79" playOrder="80">
+      <navLabel><text>— Capítulo 78</text></navLabel>
+      <content src="file0079.xhtml"/>
+    </navPoint>
+  <navPoint id="chap80" playOrder="81">
+      <navLabel><text>— Capítulo 79</text></navLabel>
+      <content src="file0080.xhtml"/>
+    </navPoint>
+  <navPoint id="chap81" playOrder="82">
+      <navLabel><text>— Capítulo 80</text></navLabel>
+      <content src="file0081.xhtml"/>
+    </navPoint>
+  <navPoint id="chap82" playOrder="83">
+      <navLabel><text>— Capítulo 81</text></navLabel>
+      <content src="file0082.xhtml"/>
+    </navPoint>
+  <navPoint id="chap83" playOrder="84">
+      <navLabel><text>— Capítulo 82</text></navLabel>
+      <content src="file0083.xhtml"/>
+    </navPoint>
+  <navPoint id="chap84" playOrder="85">
+      <navLabel><text>— Capítulo 83</text></navLabel>
+      <content src="file0084.xhtml"/>
+    </navPoint>
+  <navPoint id="chap85" playOrder="86">
+      <navLabel><text>— Capítulo 84</text></navLabel>
+      <content src="file0085.xhtml"/>
+    </navPoint>
+  <navPoint id="chap86" playOrder="87">
+      <navLabel><text>— Capítulo 85</text></navLabel>
+      <content src="file0086.xhtml"/>
+    </navPoint>
+  <navPoint id="chap87" playOrder="88">
+      <navLabel><text>— Capítulo 86</text></navLabel>
+      <content src="file0087.xhtml"/>
+    </navPoint>
+  <navPoint id="chap88" playOrder="89">
+      <navLabel><text>— Capítulo 87</text></navLabel>
+      <content src="file0088.xhtml"/>
+    </navPoint>
+  <navPoint id="chap89" playOrder="90">
+      <navLabel><text>— Capítulo 88</text></navLabel>
+      <content src="file0089.xhtml"/>
+    </navPoint>
+  <navPoint id="chap90" playOrder="91">
+      <navLabel><text>— Capítulo 89</text></navLabel>
+      <content src="file0090.xhtml"/>
+    </navPoint>
+  <navPoint id="chap91" playOrder="92">
+      <navLabel><text>— Capítulo 90</text></navLabel>
+      <content src="file0091.xhtml"/>
+    </navPoint>
+  <navPoint id="chap92" playOrder="93">
+      <navLabel><text>— Capítulo 91</text></navLabel>
+      <content src="file0092.xhtml"/>
+    </navPoint>
+  <navPoint id="chap93" playOrder="94">
+      <navLabel><text>— Capítulo 92</text></navLabel>
+      <content src="file0093.xhtml"/>
+    </navPoint>
+  <navPoint id="chap94" playOrder="95">
+      <navLabel><text>— Capítulo 93</text></navLabel>
+      <content src="file0094.xhtml"/>
+    </navPoint>
+  <navPoint id="chap95" playOrder="96">
+      <navLabel><text>— Capítulo 94</text></navLabel>
+      <content src="file0095.xhtml"/>
+    </navPoint>
+  <navPoint id="chap96" playOrder="97">
+      <navLabel><text>— Capítulo 95</text></navLabel>
+      <content src="file0096.xhtml"/>
+    </navPoint>
+  <navPoint id="chap97" playOrder="98">
+      <navLabel><text>— Capítulo 96</text></navLabel>
+      <content src="file0097.xhtml"/>
+    </navPoint>
+  <navPoint id="chap98" playOrder="99">
+      <navLabel><text>— Capítulo 97</text></navLabel>
+      <content src="file0098.xhtml"/>
+    </navPoint>
+  <navPoint id="chap99" playOrder="100">
+      <navLabel><text>— Capítulo 98</text></navLabel>
+      <content src="file0099.xhtml"/>
+    </navPoint>
+  <navPoint id="chap100" playOrder="101">
+      <navLabel><text>— Capítulo 99</text></navLabel>
+      <content src="file0100.xhtml"/>
+    </navPoint>
+  <navPoint id="chap101" playOrder="102">
+      <navLabel><text>— Capítulo 100</text></navLabel>
+      <content src="file0101.xhtml"/>
+    </navPoint>
+  <navPoint id="chap102" playOrder="103">
+      <navLabel><text>— Capítulo 101</text></navLabel>
+      <content src="file0102.xhtml"/>
+    </navPoint>
+  <navPoint id="chap103" playOrder="104">
+      <navLabel><text>— Capítulo 102</text></navLabel>
+      <content src="file0103.xhtml"/>
+    </navPoint>
+  <navPoint id="chap104" playOrder="105">
+      <navLabel><text>— Capítulo 103</text></navLabel>
+      <content src="file0104.xhtml"/>
+    </navPoint>
+  <navPoint id="chap105" playOrder="106">
+      <navLabel><text>— Capítulo 104</text></navLabel>
+      <content src="file0105.xhtml"/>
+    </navPoint>
+  <navPoint id="chap106" playOrder="107">
+      <navLabel><text>— Capítulo 105</text></navLabel>
+      <content src="file0106.xhtml"/>
+    </navPoint>
+  <navPoint id="chap107" playOrder="108">
+      <navLabel><text>— Capítulo 106</text></navLabel>
+      <content src="file0107.xhtml"/>
+    </navPoint>
+  <navPoint id="chap108" playOrder="109">
+      <navLabel><text>— Capítulo 107</text></navLabel>
+      <content src="file0108.xhtml"/>
+    </navPoint>
+  <navPoint id="chap109" playOrder="110">
+      <navLabel><text>— Capítulo 108</text></navLabel>
+      <content src="file0109.xhtml"/>
+    </navPoint>
+  <navPoint id="chap110" playOrder="111">
+      <navLabel><text>— Capítulo 109 - ☫ Fim da História Principal</text></navLabel>
+      <content src="file0110.xhtml"/>
+    </navPoint>
+  <navPoint id="chap111" playOrder="112">
+      <navLabel><text>— Capítulo 110 - Epílogo</text></navLabel>
+      <content src="file0111.xhtml"/>
+    </navPoint>
+  <navPoint id="chap112" playOrder="113">
+      <navLabel><text>— Capítulo 111 - Epílogo</text></navLabel>
+      <content src="file0112.xhtml"/>
+    </navPoint>
+  <navPoint id="chap113" playOrder="114">
+      <navLabel><text>— Capítulo 112 - Extra</text></navLabel>
+      <content src="file0113.xhtml"/>
+    </navPoint>
+  <navPoint id="chap114" playOrder="115">
+      <navLabel><text>— Capítulo 113 - Extra</text></navLabel>
+      <content src="file0114.xhtml"/>
+    </navPoint>
+  <navPoint id="chap115" playOrder="116">
+      <navLabel><text>— Capítulo 114 - Fim do Extra</text></navLabel>
+      <content src="file0115.xhtml"/>
+    </navPoint>
+  <navPoint id="chap116" playOrder="117">
+      <navLabel><text>— Capítulo 115</text></navLabel>
+      <content src="file0116.xhtml"/>
+    </navPoint>
+  <navPoint id="chap117" playOrder="118">
+      <navLabel><text>— Capítulo 116</text></navLabel>
+      <content src="file0117.xhtml"/>
+    </navPoint>
+  <navPoint id="chap118" playOrder="119">
+      <navLabel><text>— Capítulo 117</text></navLabel>
+      <content src="file0118.xhtml"/>
+    </navPoint>
+  <navPoint id="chap119" playOrder="120">
+      <navLabel><text>— Capítulo 118</text></navLabel>
+      <content src="file0119.xhtml"/>
+    </navPoint>
+  <navPoint id="chap120" playOrder="121">
+      <navLabel><text>— Capítulo 119</text></navLabel>
+      <content src="file0120.xhtml"/>
+    </navPoint>
+  <navPoint id="chap121" playOrder="122">
+      <navLabel><text>— Capítulo 120</text></navLabel>
+      <content src="file0121.xhtml"/>
+    </navPoint>
+  <navPoint id="chap122" playOrder="123">
+      <navLabel><text>— Capítulo 121</text></navLabel>
+      <content src="file0122.xhtml"/>
+    </navPoint>
+  <navPoint id="chap123" playOrder="124">
+      <navLabel><text>— Capítulo 122</text></navLabel>
+      <content src="file0123.xhtml"/>
+    </navPoint>
+  <navPoint id="chap124" playOrder="125">
+      <navLabel><text>— Capítulo 123</text></navLabel>
+      <content src="file0124.xhtml"/>
+    </navPoint>
+  <navPoint id="chap125" playOrder="126">
+      <navLabel><text>— Capítulo 124</text></navLabel>
+      <content src="file0125.xhtml"/>
+    </navPoint>
+  <navPoint id="chap126" playOrder="127">
+      <navLabel><text>— Capítulo 125</text></navLabel>
+      <content src="file0126.xhtml"/>
+    </navPoint>
+  <navPoint id="chap127" playOrder="128">
+      <navLabel><text>— Capítulo 126</text></navLabel>
+      <content src="file0127.xhtml"/>
+    </navPoint>
+  <navPoint id="chap128" playOrder="129">
+      <navLabel><text>— Capítulo 127</text></navLabel>
+      <content src="file0128.xhtml"/>
+    </navPoint>
+  <navPoint id="chap129" playOrder="130">
+      <navLabel><text>— Capítulo 128</text></navLabel>
+      <content src="file0129.xhtml"/>
+    </navPoint>
+  <navPoint id="chap130" playOrder="131">
+      <navLabel><text>— Capítulo 129 - Fim</text></navLabel>
+      <content src="file0130.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>

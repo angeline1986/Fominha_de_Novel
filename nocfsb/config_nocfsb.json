@@ -1,0 +1,50 @@
+{
+  "book": {
+    "id": "salt-society",
+    "title": "Salt Society",
+    "author": "ARGON18",
+    "language": "pt-BR"
+  },
+  "site": "https://nocfsb.com",
+  "output_dir": "output",
+  "output_json": "output/salt-society.json",
+  "cache_file": "output/salt-society_cache.json",
+  "output_epub": "output/salt-society.epub",
+  "cover_source": "cover.jpg",
+  "chapter_delay_min_ms": 4000,
+  "chapter_delay_max_ms": 7000,
+  "http": {
+    "timeout": 30,
+    "max_retries": 2,
+    "retry_backoff": 2,
+    "user_agent": "Mozilla/5.0 (compatible; FominhaDeNovel/1.0)"
+  },
+  "volumes": [
+    {
+      "base": "https://nocfsb.com/manga/salt-society/volume-01",
+      "start": 1,
+      "end": 30,
+      "leading": ["00_1"]
+    },
+    {
+      "base": "https://nocfsb.com/manga/salt-society/volume-02",
+      "start": 31,
+      "end": 59
+    },
+    {
+      "base": "https://nocfsb.com/manga/salt-society/volume-03",
+      "start": 60,
+      "end": 85
+    },
+    {
+      "base": "https://nocfsb.com/manga/salt-society/volume-04",
+      "start": 86,
+      "end": 114
+    },
+    {
+      "base": "https://nocfsb.com/manga/salt-society/volume-05-extra",
+      "start": 115,
+      "end": 129
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+body { font-family: serif; line-height: 1.6; margin: 1.5em; }
+h1, h2, h3 { text-align: center; }
+p { text-indent: 1.5em; margin: 0.5em 0; }
+.separator { text-align: center; text-indent: 0; }
