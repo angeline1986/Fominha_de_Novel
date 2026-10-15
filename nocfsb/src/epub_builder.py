@@ -106,12 +106,40 @@ p { text-indent: 1.5em; margin: 0.5em 0; }
     write_text(oebps_dir / "stylesheet.css", css)
 
 
+def _is_redundant_chapter_heading(paragraph: str, title: str) -> bool:
+    """Detect a standalone copy of the chapter number, never narrative text."""
+    title_match = re.search(r"\bcap[ií]tulo\s*0*(\d+)\b", title, re.IGNORECASE)
+    if title_match is None:
+        return False
+
+    # Source pages sometimes prefix the heading with arrows or dashes.
+    heading_match = re.fullmatch(
+        r"[\s\ufeff\u200b-\u200d\u2060\u2190-\u21ff\u2500-\u257f\u27f0-\u27ff—–\-:]*"
+        r"cap[ií]tulo\s*0*(\d+)"
+        r"[\s\ufeff\u200b-\u200d\u2060\u2190-\u21ff\u2500-\u257f\u27f0-\u27ff—–\-:]*",
+        str(paragraph),
+        re.IGNORECASE,
+    )
+    return heading_match is not None and int(heading_match.group(1)) == int(title_match.group(1))
+
+
 def generate_chapter_xhtml(oebps_dir: Path, chapter: dict[str, Any], index: int) -> str:
     filename = f"file{index + 1:04d}.xhtml"
     title = chapter_display_title(chapter)
     safe_title = _safe_title(title)
+    source_paragraphs = list(chapter.get("paragraphs", []))
+    # Remove only the first nonempty paragraph when it repeats this chapter's
+    # number exactly. Do not edit the source dictionary, JSON, or cache.
+    first_content_index = next(
+        (i for i, value in enumerate(source_paragraphs) if str(value).strip()), None
+    )
+    if first_content_index is not None and _is_redundant_chapter_heading(
+        str(source_paragraphs[first_content_index]), title
+    ):
+        source_paragraphs.pop(first_content_index)
+
     paragraphs = []
-    for paragraph in chapter.get("paragraphs", []):
+    for paragraph in source_paragraphs:
         text = html.escape(str(paragraph), quote=False)
         paragraphs.append(f"<p>{text}</p>")
     body = "\n".join(paragraphs) if paragraphs else "<p>Capítulo sem conteúdo.</p>"
@@ -131,11 +159,30 @@ def generate_chapter_xhtml(oebps_dir: Path, chapter: dict[str, Any], index: int)
     return filename
 
 
-def generate_nav(oebps_dir: Path, chapters: list[dict[str, Any]]) -> None:
-    items = "\n".join(
-        f'<li><a href="{chapter["file_name"]}">{_safe_title(str(chapter["title"]))}</a></li>'
-        for chapter in chapters
-    )
+def _toc_chapter_title(chapter: dict[str, Any]) -> str:
+    """Remove the redundant volume prefix only from navigation labels."""
+    title = str(chapter["title"])
+    number = chapter.get("volume_number")
+    if number:
+        title = re.sub(rf"^Volume\s+0?{int(number)}\s+[—–-]\s*", "", title, flags=re.IGNORECASE)
+    return title
+
+
+def generate_nav(oebps_dir: Path, sections: list[dict[str, Any]]) -> None:
+    items = []
+    for section in sections:
+        chapters = section["chapters"]
+        if not chapters:
+            continue
+        first_file = chapters[0]["file_name"]
+        chapter_items = "\n".join(
+            f'<li><a href="{chapter["file_name"]}">{_safe_title(_toc_chapter_title(chapter))}</a></li>'
+            for chapter in chapters
+        )
+        items.append(
+            f'<li><a href="{first_file}">{_safe_title(section["title"])}</a>\n'
+            f'<ol>\n{chapter_items}\n</ol></li>'
+        )
     content = f'''<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
   <head>
@@ -147,7 +194,7 @@ def generate_nav(oebps_dir: Path, chapters: list[dict[str, Any]]) -> None:
       <h2>Índice</h2>
       <ol>
         <li><a href="title_page.xhtml">Página de Título</a></li>
-        {items}
+        {"".join(items)}
       </ol>
     </nav>
   </body>
@@ -156,22 +203,37 @@ def generate_nav(oebps_dir: Path, chapters: list[dict[str, Any]]) -> None:
     write_text(oebps_dir / "nav.xhtml", content)
 
 
-def generate_ncx(oebps_dir: Path, chapters: list[dict[str, Any]], config: dict[str, Any]) -> None:
+def generate_ncx(oebps_dir: Path, sections: list[dict[str, Any]], config: dict[str, Any]) -> None:
     book = config.get("book", {})
     title = book.get("title", "Salt Society")
     book_id = book.get("id", "salt-society")
-    items = "\n".join(
-        f'''  <navPoint id="chap{index + 1}" playOrder="{index + 2}">
-      <navLabel><text>{_safe_title(str(chapter["title"]))}</text></navLabel>
-      <content src="{chapter["file_name"]}"/>
-    </navPoint>'''
-        for index, chapter in enumerate(chapters)
-    )
+    items = []
+    play_order = 2  # title page is first
+    for index, section in enumerate(sections, start=1):
+        chapters = section["chapters"]
+        if not chapters:
+            continue
+        first_file = chapters[0]["file_name"]
+        children = []
+        section_order = play_order
+        play_order += 1
+        for chapter_index, chapter in enumerate(chapters, start=1):
+            children.append(
+                f'<navPoint id="vol{index}-chap{chapter_index}" playOrder="{play_order}">'
+                f'<navLabel><text>{_safe_title(_toc_chapter_title(chapter))}</text></navLabel>'
+                f'<content src="{chapter["file_name"]}"/></navPoint>'
+            )
+            play_order += 1
+        items.append(
+            f'<navPoint id="vol{index}" playOrder="{section_order}">'
+            f'<navLabel><text>{_safe_title(section["title"])}</text></navLabel>'
+            f'<content src="{first_file}"/>{"".join(children)}</navPoint>'
+        )
     content = f'''<?xml version="1.0" encoding="UTF-8"?>
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
   <head>
     <meta name="dtb:uid" content="{book_id}"/>
-    <meta name="dtb:depth" content="1"/>
+    <meta name="dtb:depth" content="2"/>
     <meta name="dtb:totalPageCount" content="0"/>
     <meta name="dtb:maxPageNumber" content="0"/>
   </head>
@@ -181,7 +243,7 @@ def generate_ncx(oebps_dir: Path, chapters: list[dict[str, Any]], config: dict[s
       <navLabel><text>Página de Título</text></navLabel>
       <content src="title_page.xhtml"/>
     </navPoint>
-    {items}
+    {"".join(items)}
   </navMap>
 </ncx>
 '''
@@ -264,11 +326,12 @@ def build_epub(chapters: list[dict[str, Any]], config: dict[str, Any]) -> Path:
             "title": chapter_dict.get("title", f"Capítulo {index + 1}"),
             "file_name": file_name,
             "url": chapter_dict.get("url", ""),
-            "volume_number": chapter_volume_number(chapter_dict),
+            "volume_number": chapter_dict.get("volume_number") if chapter_dict.get("volume_number") is not None else chapter_volume_number(chapter_dict),
         })
 
-    generate_nav(oebps_dir, chapter_entries)
-    generate_ncx(oebps_dir, chapter_entries, config)
+    sections = build_volume_sections(chapter_entries)
+    generate_nav(oebps_dir, sections)
+    generate_ncx(oebps_dir, sections, config)
     generate_opf(oebps_dir, chapter_entries, config, has_cover)
 
     output_path = base_dir / config.get("output_epub", "output/salt-society.epub")
