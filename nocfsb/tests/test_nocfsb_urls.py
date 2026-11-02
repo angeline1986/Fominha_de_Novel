@@ -70,6 +70,22 @@ class NocfsbUrlsTest(unittest.TestCase):
         self.assertEqual(len(normalized), 1)
         self.assertEqual(normalized[0]["url"], "https://nocfsb.com/manga/salt-society/volume-01/capitulo-00_1/")
 
+    def test_same_chapter_number_in_different_volumes_is_preserved(self):
+        config = {
+            "volumes": [
+                {"base": "https://nocfsb.com/manga/book/volume-1", "start": 1, "end": 1},
+                {"base": "https://nocfsb.com/manga/book/volume-2", "start": 1, "end": 1},
+            ]
+        }
+        chapters = [
+            {"url": url, "title": "Capítulo 1", "paragraphs": [f"Texto do volume {index}"]}
+            for index, url in enumerate(build_book_urls(config), start=1)
+        ]
+
+        self.assertEqual(len(normalize_chapters(chapters)), 2)
+        self.assertTrue(validate_chapter_collection(config, chapters)["is_valid"])
+        self.assertEqual(validate_chapter_collection(config, chapters[:1])["missing_urls"], [chapters[1]["url"]])
+
     def test_config_metadata_and_cover_path_are_defined(self):
         config = {
             "book": {"author": "ARGON18"},
@@ -78,6 +94,31 @@ class NocfsbUrlsTest(unittest.TestCase):
 
         self.assertEqual(config["book"]["author"], "ARGON18")
         self.assertTrue(config["cover_source"].endswith(".jpg"))
+
+    def test_custom_nocfsb_config_builds_7_minutes_of_heaven_urls(self):
+        config_path = Path(__file__).resolve().parents[1] / "config_7_minutes_of_heaven.json"
+        self.assertTrue(config_path.exists(), "Configuração da obra não foi criada ainda.")
+
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        urls = build_book_urls(config)
+
+        self.assertIn("https://nocfsb.com/manga/7-minutes-of-heaven/volume-1/capitulo-01/", urls)
+        self.assertIn("https://nocfsb.com/manga/7-minutes-of-heaven/volume-2/capitulo-13_1/", urls)
+        self.assertIn("https://nocfsb.com/manga/7-minutes-of-heaven/volume-3/capitulo-09_2/", urls)
+        self.assertIn("https://nocfsb.com/manga/7-minutes-of-heaven/volume-4/capitulo-07_3/", urls)
+        self.assertIn("https://nocfsb.com/manga/7-minutes-of-heaven/spin-off/spin-off-01/", urls)
+        self.assertEqual(len(urls), 64)
+        spin_off_urls = [url for url in urls if "/spin-off/" in url or "/spin-off-2-fim/" in url]
+        self.assertEqual(
+            spin_off_urls,
+            [
+                f"https://nocfsb.com/manga/7-minutes-of-heaven/spin-off/spin-off-{slug}/"
+                for slug in ("01", "01-2", "02", "03", "04", "05")
+            ] + [
+                f"https://nocfsb.com/manga/7-minutes-of-heaven/spin-off-2-fim/spin-off-{slug}/"
+                for slug in ("01_1", "02_1", "03_1", "03-2", "04_1", "04-2", "05_1", "05-2")
+            ],
+        )
 
     def test_validate_chapter_collection_detects_missing_number(self):
         config = {
@@ -159,6 +200,17 @@ class NocfsbUrlsTest(unittest.TestCase):
 
         self.assertEqual([section["volume_number"] for section in sections], [1, 2])
         self.assertEqual(len(sections[1]["chapters"]), 2)
+
+    def test_build_volume_sections_keeps_spin_offs_after_volumes(self):
+        chapters = [
+            {"url": "https://nocfsb.com/manga/book/volume-1/capitulo-01/"},
+            {"url": "https://nocfsb.com/manga/book/spin-off/spin-off-01/"},
+            {"url": "https://nocfsb.com/manga/book/spin-off-2-fim/spin-off-01/"},
+        ]
+
+        sections = build_volume_sections(chapters)
+
+        self.assertEqual([section["title"] for section in sections], ["Volume 1", "Spin-off", "Spin-off 2 Fim"])
 
 
 if __name__ == "__main__":

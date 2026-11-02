@@ -6,6 +6,7 @@ import shutil
 import zipfile
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from .storage import ensure_dir, write_text
 
@@ -39,24 +40,32 @@ def chapter_display_title(chapter: dict[str, Any]) -> str:
 
 
 def build_volume_sections(chapters: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    grouped: dict[int, list[dict[str, Any]]] = {}
+    sections: dict[tuple[str, str], dict[str, Any]] = {}
     for chapter in chapters:
         chapter_data = chapter.to_dict() if hasattr(chapter, "to_dict") else dict(chapter)
         volume_number = chapter_data.get("volume_number")
         if volume_number is None:
             volume_number = chapter_volume_number(chapter_data)
-        if volume_number is None:
-            volume_number = 0
-        grouped.setdefault(int(volume_number), []).append(chapter_data)
-
-    sections: list[dict[str, Any]] = []
-    for volume_number in sorted(grouped.keys()):
-        sections.append({
-            "volume_number": volume_number,
-            "title": f"Volume {volume_number}" if volume_number else "Capítulos avulsos",
-            "chapters": grouped[volume_number],
-        })
-    return sections
+        if volume_number is not None:
+            key = ("volume", str(int(volume_number)))
+            title = f"Volume {int(volume_number)}"
+        else:
+            parent = Path(urlsplit(str(chapter_data.get("url", ""))).path.rstrip("/")).parent.name
+            key = ("other", parent)
+            spin_off = re.match(r"spin[-_]off", parent, flags=re.IGNORECASE)
+            if spin_off:
+                suffix = parent[spin_off.end():].replace("-", " ").replace("_", " ").strip()
+                title = f"Spin-off {suffix.title()}".strip()
+            else:
+                title = parent.replace("-", " ").replace("_", " ").title() or "Capítulos avulsos"
+        if key not in sections:
+            sections[key] = {
+                "volume_number": int(volume_number) if volume_number is not None else 0,
+                "title": title,
+                "chapters": [],
+            }
+        sections[key]["chapters"].append(chapter_data)
+    return list(sections.values())
 
 
 def generate_cover_xhtml(oebps_dir: Path) -> None:
@@ -300,7 +309,8 @@ def generate_container(meta_dir: Path) -> None:
 
 def build_epub(chapters: list[dict[str, Any]], config: dict[str, Any]) -> Path:
     base_dir = Path(__file__).resolve().parents[1]
-    work_dir = base_dir / "build_epub"
+    book_id = re.sub(r"[^a-zA-Z0-9_-]+", "-", str(config.get("book", {}).get("id", "salt-society")))
+    work_dir = base_dir / ("build_epub" if book_id == "salt-society" else f"build_epub_{book_id}")
     if work_dir.exists():
         shutil.rmtree(work_dir)
     meta_dir = ensure_dir(work_dir / "META-INF")

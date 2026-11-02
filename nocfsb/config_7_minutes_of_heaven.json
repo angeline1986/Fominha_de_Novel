@@ -1,0 +1,61 @@
+{
+  "book": {
+    "id": "7-minutes-of-heaven",
+    "title": "7 Minutes of Heaven",
+    "author": "Desconhecido",
+    "language": "pt-BR"
+  },
+  "site": "https://nocfsb.com",
+  "output_dir": "output",
+  "output_json": "output/7-minutes-of-heaven.json",
+  "cache_file": "output/7-minutes-of-heaven_cache.json",
+  "output_epub": "output/7-minutes-of-heaven.epub",
+  "cover_source": "cover_7_minutes_of_heaven.jpg",
+  "chapter_delay_min_ms": 4000,
+  "chapter_delay_max_ms": 7000,
+  "http": {
+    "timeout": 30,
+    "max_retries": 2,
+    "retry_backoff": 2,
+    "user_agent": "Mozilla/5.0 (compatible; FominhaDeNovel/1.0)"
+  },
+  "volumes": [
+    {
+      "base": "https://nocfsb.com/manga/7-minutes-of-heaven/volume-1",
+      "chapter_prefix": "capitulo",
+      "start": 1,
+      "end": 21
+    },
+    {
+      "base": "https://nocfsb.com/manga/7-minutes-of-heaven/volume-2",
+      "chapter_prefix": "capitulo",
+      "chapter_suffix": "_1",
+      "start": 1,
+      "end": 13
+    },
+    {
+      "base": "https://nocfsb.com/manga/7-minutes-of-heaven/volume-3",
+      "chapter_prefix": "capitulo",
+      "chapter_suffix": "_2",
+      "start": 1,
+      "end": 9
+    },
+    {
+      "base": "https://nocfsb.com/manga/7-minutes-of-heaven/volume-4",
+      "chapter_prefix": "capitulo",
+      "chapter_suffix": "_3",
+      "start": 1,
+      "end": 7
+    },
+    {
+      "base": "https://nocfsb.com/manga/7-minutes-of-heaven/spin-off",
+      "chapter_prefix": "spin-off",
+      "chapters": ["01", "01-2", "02", "03", "04", "05"]
+    },
+    {
+      "base": "https://nocfsb.com/manga/7-minutes-of-heaven/spin-off-2-fim",
+      "chapter_prefix": "spin-off",
+      "chapters": ["01_1", "02_1", "03_1", "03-2", "04_1", "04-2", "05_1", "05-2"]
+    }
+  ]
+}

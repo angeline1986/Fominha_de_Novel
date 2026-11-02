@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 import time
 from typing import Any
+from urllib.parse import urlsplit
 
 import requests
 
@@ -40,6 +41,8 @@ def fetch_html(
         try:
             response = session.get(url, timeout=timeout)
             response.raise_for_status()
+            if urlsplit(response.url).path.rstrip("/") != urlsplit(url).path.rstrip("/"):
+                raise RuntimeError(f"Redirecionamento para outro capítulo: {url} -> {response.url}")
             if response.encoding is None or response.encoding.lower() == "iso-8859-1":
                 response.encoding = response.apparent_encoding or "utf-8"
             return response.text
