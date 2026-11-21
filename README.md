@@ -2,6 +2,14 @@
 
 Scripts para extrair capítulos de novels pela web e gerar arquivos EPUB ou DOCX.
 
+## Módulos por site
+
+- [Born to Be Novel](borntobenovel/README.md): coleta os capítulos 77 a 140 de *Mind the Gap* e gera JSON e EPUB.
+- [NOCFSB](nocfsb/README.md)
+- [Ocean of PDF](oceanofpdf/README.md)
+- [Zhenhun Xiaoshuo](zhenhunxiaoshuo/README.md)
+- Novellive: instruções abaixo.
+
 O fluxo principal atual usa o `scraper_epub_wfxs.py`, que recebe uma configuração em JSON com as URLs, seletores CSS, metadados do livro e capa.
 
 ## Requisitos

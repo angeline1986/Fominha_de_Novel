@@ -1,0 +1,21 @@
+{
+  "book": {
+    "id": "mind-the-gap-77-140",
+    "title": "Mind the Gap — Chapters 77–140",
+    "author": "",
+    "language": "en"
+  },
+  "site": "https://borntobenovel.com",
+  "chapter_base": "https://borntobenovel.com/novel/mind-the-gap/chapters/ch-",
+  "first_chapter": 77,
+  "last_chapter": 140,
+  "output_json": "output/mind-the-gap-77-140.json",
+  "cache_file": "output/mind-the-gap-77-140_cache.json",
+  "output_epub": "output/mind-the-gap-77-140.epub",
+  "chapter_delay_seconds": 1.0,
+  "http": {
+    "timeout": 30,
+    "max_retries": 2,
+    "retry_backoff_seconds": 2
+  }
+}
