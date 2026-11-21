@@ -22,6 +22,7 @@ python -m borntobenovel.menu epub
 ```
 
 O módulo salva `output/mind-the-gap-77-140.json` e um cache após cada capítulo.
+Os arquivos de `output/` são gerados localmente e ignorados pelo Git.
 Se a coleta for interrompida, execute `collect` ou `all` novamente para
 continuar apenas com os capítulos pendentes. O EPUB só é criado quando os 64
 capítulos, seus títulos e seus parágrafos passam na validação.
